@@ -1,5 +1,6 @@
 """Builds the SETD website (static HTML) into /home/claude/site_c from the content below."""
 import html, re, pathlib
+from hiring_page import hiring_body
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT/"setd-website"
 CONTENT = ROOT/"src"/"content"
@@ -7,7 +8,7 @@ E = html.escape
 
 EMAIL = "jude.okolie@bucknell.edu"
 LINKS = [("Google Scholar","https://scholar.google.com/citations?user=G-_iMkoAAAAJ&hl=en&oi=ao"),("ORCID","https://orcid.org/0000-0001-7506-551X"),("LinkedIn","https://www.linkedin.com/in/judeaokolie/"),("ResearchGate","https://www.researchgate.net/profile/Jude-Okolie")]
-NAV = [("index.html","Home"),("research.html","Research"),("people.html","People"),("facilities.html","Facilities"),("publications.html","Publications"),("teaching.html","Teaching"),("outreach.html","Outreach"),("news.html","News"),("about.html","About"),("contact.html","Contact")]
+NAV = [("index.html","Home"),("research.html","Research"),("people.html","People"),("facilities.html","Facilities"),("publications.html","Publications"),("teaching.html","Teaching"),("outreach.html","Outreach"),("news.html","News"),("about.html","About"),("student-hiring.html","Student Hiring"),("contact.html","Contact")]
 
 def ext(t,u,cls=""):
     c=f' class="{cls}"' if cls else ""
@@ -242,7 +243,7 @@ def build():
 <section><div class="wrap"><span class="tag">People</span><h2>Meet the team</h2><p class="lede">Graduate and undergraduate researchers at Bucknell, with collaborators at partner institutions.</p><div class="team">{team}</div><p style="margin-top:32px"><a class="btn" href="people.html">Current &amp; past members</a></p></div></section>
 <section class="tint"><div class="wrap"><span class="tag">Facilities</span><h2>Laboratory facilities</h2><p class="lede">High-pressure reactors, thermochemical conversion systems and materials characterization in the SETD laboratory.</p><div class="fac">{fac}</div><p style="margin-top:32px"><a class="btn" href="facilities.html">All laboratory resources</a></p></div></section>
 <section><div class="wrap"><span class="tag">Books</span><h2>Books</h2><p class="lede">Edited volumes and textbooks on biofuels, hydrogen, carbon materials, machine learning and hands-on learning.</p><div class="books">{books}</div></div></section>
-<section style="padding-top:0"><div class="wrap"><div class="join"><div><h2>Join the group</h2><p>“I don't turn students away because research is mostly about having a space to explore. All they need to work with me is interest, passion and discipline.” We welcome undergraduate and graduate students and collaborators interested in waste valorization, hydrogen, carbon capture and process modelling.</p></div><div><a class="btn pri" href="mailto:{EMAIL}">{EMAIL}</a></div></div></div></section>"""
+<section style="padding-top:0"><div class="wrap"><div class="join"><div><h2>Join the group</h2><p>“I don't turn students away because research is mostly about having a space to explore. All they need to work with me is interest, passion and discipline.” We welcome undergraduate and graduate students and collaborators interested in waste valorization, hydrogen, carbon capture and process modelling.</p></div><div class="btns"><a class="btn pri" href="student-hiring.html">Open MSc &amp; PhD positions</a><a class="btn" href="mailto:{EMAIL}">{EMAIL}</a></div></div></div></section>"""
     page("index.html","SETD Research Group · Dr. Jude A. Okolie","Sustainable Energy Transition and Decarbonization (SETD) research group led by Dr. Jude A. Okolie, Chemical Engineering, Bucknell University.",home)
 
     # RESEARCH
@@ -371,8 +372,10 @@ def build():
     # CONTACT
     contact=hero("Contact","Get in touch","Prospective students, collaborators and media are welcome to reach out.")+f"""
 <section><div class="wrap cols"><div><span class="tag">Contact</span><h2>Dr. Jude A. Okolie</h2><ul class="list"><li><b>Email</b><br><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><b>Address</b><br>Department of Chemical Engineering, Bucknell University<br>One Dent Drive, Lewisburg, PA 17837</li></ul><div class="chips" style="margin-top:24px">{"".join(ext(t,u,"chip") for t,u in LINKS)}</div></div>
-<div class="callout"><span class="tag">Join us</span><h2 style="font-size:clamp(26px,3vw,36px)">Interested in joining SETD?</h2><p class="muted">We welcome inquiries from Bucknell undergraduates looking for research experience, prospective graduate students and postdocs, and industry and academic collaborators. Send a short note on your research interests along with your CV.</p><a class="btn pri" href="mailto:{EMAIL}?subject=SETD%20research%20inquiry">Email Dr. Okolie</a></div></div></section>"""
+<div class="callout"><span class="tag">Join us</span><h2 style="font-size:clamp(26px,3vw,36px)">Interested in joining SETD?</h2><p class="muted">We welcome inquiries from Bucknell undergraduates looking for research experience, prospective graduate students and postdocs, and industry and academic collaborators. Send a short note on your research interests along with your CV.</p><div class="btns"><a class="btn pri" href="mailto:{EMAIL}?subject=SETD%20research%20inquiry">Email Dr. Okolie</a><a class="btn" href="student-hiring.html">Open MSc &amp; PhD positions</a></div></div></div></section>"""
     page("contact.html","Contact · SETD Research Group","Contact Dr. Jude A. Okolie and the SETD Research Group.",contact)
+
+    page("student-hiring.html","Student Hiring · Graduate Research Assistants (MSc/PhD) · SETD Research Group","Fully funded MSc and PhD research assistant positions with the SETD group in collaboration with McGill University: critical mineral recovery from spent lithium batteries and rare earth recovery.",hiring_body(EMAIL))
 
 build()
 print("built", sorted(p.name for p in OUT.glob("*.html")))
