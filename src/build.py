@@ -15,7 +15,7 @@ def ext(t,u,cls=""):
     return f'<a href="{E(u)}" target="_blank" rel="noopener"{c}>{t}</a>'
 
 def page(fname, title, desc, body):
-    nav = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h==fname else ""}>{n}</a>' for h,n in NAV)
+    nav = "".join(f'<a href="{h}"{" class=\"nav-cta\"" if h=="student-hiring.html" else ""}{" aria-current=\"page\"" if h==fname else ""}>{n}</a>' for h,n in NAV)
     foot_pages = "".join(f'<a href="{h}">{n}</a>' for h,n in NAV)
     foot_links = "".join(ext(t,u) for t,u in LINKS)
     doc = f"""<!DOCTYPE html>
