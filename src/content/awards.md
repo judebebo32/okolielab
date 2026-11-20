@@ -1,0 +1,16 @@
+# Selected honors, awards and scholarships (verbatim)
+- George Ira Hanson Energy Research Award, $1,000 — 2021
+- George Ira Hanson Energy Research Award, $1,000 — 2020
+- Engineering Devolved Scholarship, University of Saskatchewan, $20,000 — 2020
+- Engineering Devolved Scholarship, University of Saskatchewan, $20,000 — 2019
+- Graduate service fellowship, University of Saskatchewan, $5,400 — 2018
+- Engineering Research Scholarship, University of Saskatchewan, $20,000 — 2018
+- International Student and Study Abroad Centre Travel Award, $350 — 2018
+- College of Engineering Travel Award, University of Saskatchewan, $500 — 2018
+- Dora Plus Travel Scholarship, Estonian Government, $1,500 — 2017
+- Dora Plus Scholarship, Estonian Government, $8,500 — 2016
+- Performance scholarship, Tallinn University of Technology, $700 — 2016
+- Tuition waiver scholarship, Tallinn University of Technology, $12,000 — 2016
+- Shell Petroleum Development Company (SPDC) Scholarship, $85,000 — 2015
+- Top graduating student Award, University of Benin, $150 — 2013 (listed twice on site)
+- Petroleum Technology Development Fund (PTDF) Award, $8,000 — 2010
