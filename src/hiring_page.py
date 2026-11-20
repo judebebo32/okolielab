@@ -71,7 +71,7 @@ STYLE = """
 .hire-collage{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hire-collage img{width:100%;height:100%;object-fit:cover;border-radius:12px;aspect-ratio:1}
 .hire-collage img:first-child{grid-column:span 2;aspect-ratio:16/9}
-.hire-glance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.hire-glance{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
 .hire-glance div{border-top:3px solid var(--orange);padding-top:14px}
 .hire-glance b{display:block;color:var(--navy);font-size:18px;margin-bottom:4px}
 .hire-glance p{margin:0;color:var(--muted);font-size:15px}
@@ -124,7 +124,7 @@ STYLE = """
 .f-msg.info{background:var(--tint);color:var(--navy)}
 .hire-form button[disabled]{opacity:.55;cursor:not-allowed}
 .hire-form .btn{cursor:pointer;font:inherit;font-weight:700}
-@media (max-width:860px){.hire-hero .wrap,.proj,.f-row{grid-template-columns:1fr}.hire-glance{grid-template-columns:1fr 1fr}.proj-media{position:static}.proj:nth-of-type(even) .proj-media{order:0}.hire-form{padding:22px}}
+@media (max-width:860px){.hire-hero .wrap,.proj,.f-row,#diversity .cols{grid-template-columns:1fr}.hire-glance{grid-template-columns:1fr 1fr}.proj-media{position:static}.proj:nth-of-type(even) .proj-media{order:0}.hire-form{padding:22px}}
 </style>
 """
 
@@ -223,7 +223,7 @@ def hiring_body(email):
 <div class="hire-hero"><div class="wrap">
 <div><span class="tag">Now hiring · Research assistants</span>
 <h1>Recover the metals the energy transition runs on</h1>
-<p>The SETD Research Group is recruiting graduate research assistants for two projects on recovering critical and rare earth metals from waste. McGill University will be the students' primary home.</p>
+<p>The SETD Research Group is recruiting graduate research assistants for two projects on recovering critical and rare earth metals from waste. McGill University will be the students' primary home, with part of the research carried out at Bucknell University.</p>
 <div class="hire-badges"><span><b>2</b> positions</span><span>MSc or PhD</span><span>Fully funded</span><span>Based at McGill University</span></div>
 <div class="btns"><a class="btn pri" href="#apply">Apply now</a><a class="btn" href="#projects">See the projects</a></div></div>
 <div class="hire-collage"><img src="img/aiche26-group.jpg" alt="SETD students at the AIChE Annual Meeting"><img src="img/lab-uv-vis.jpg" alt="UV-Vis spectrophotometer in the SETD lab"><img src="img/aiche26-reed-muir.jpg" alt="SETD student presenting battery-recycling research"></div>
@@ -234,6 +234,7 @@ def hiring_body(email):
 <div><b>Two projects</b><p>Autonomous critical-mineral recovery from spent lithium batteries, and continuous rare earth recovery with functionalized porous materials.</p></div>
 <div><b>MSc or PhD at McGill</b><p>Both degree levels are open. McGill University is the student's primary home: students enroll in and are based at McGill.</p></div>
 <div><b>Fully funded</b><p>Positions include a stipend and tuition.</p></div>
+<div><b>Time at Bucknell</b><p>Some aspects of each project will be performed at Bucknell University in Lewisburg, Pennsylvania. Successful applicants must be willing to spend some time there.</p></div>
 </div></div></section>
 
 <section id="projects" style="padding-top:0"><div class="wrap">
@@ -247,12 +248,20 @@ def hiring_body(email):
 <li>A degree in chemical, materials, environmental or mechanical engineering, chemistry or a related field.</li>
 <li>Curiosity, passion and discipline: interest matters more than prior experience in every technique listed.</li>
 <li>For Project 1, an interest in automation, coding or machine learning; for Project 2, an interest in materials synthesis and separations.</li>
-<li>Clear scientific writing and a willingness to share work at conferences and in journals.</li></ul></div>
+<li>Clear scientific writing and a willingness to share work at conferences and in journals.</li>
+<li>Willingness to spend some time at Bucknell University (Lewisburg, Pennsylvania), where some aspects of the projects will be performed.</li></ul></div>
 <div><span class="tag">How to apply</span><h2>Three documents, one form</h2><div class="steps" style="grid-template-columns:1fr;gap:14px">
 <div class="step"><span>Document 1</span><b>Cover letter · 1 page</b><p>Your motivation for applying, your preferred project(s) and your future plans.</p></div>
 <div class="step"><span>Document 2</span><b>CV · up to 2 pages</b><p>Education, research experience, skills, and any publications or presentations.</p></div>
 <div class="step"><span>Document 3</span><b>Research proposal · up to 3 pages</b><p>Your own approach to one of the two projects: the problem, your objectives, methods and expected outcomes.</p></div>
 </div></div></div></section>
+
+<section id="diversity" style="background:var(--navy);color:#DCE4EC"><div class="wrap cols" style="align-items:start">
+<div><span class="tag" style="color:var(--orange)">Equity, diversity &amp; inclusion</span><h2 style="color:#fff">Our commitment to diversity</h2>
+<p>The SETD Research Group selects students on the basis of merit and is firmly committed to equity, diversity and inclusion. We believe that people with different backgrounds, experiences and ways of thinking make our research stronger, and we work to make sure every member of the group feels welcome, respected and able to do their best work.</p></div>
+<div><p style="margin-top:0">We welcome applications from women, Indigenous persons, racialized persons and members of visible minorities, persons with disabilities, ethnic and religious minorities, persons of minority sexual orientations and gender identities, first-generation university students and international applicants, as well as from all qualified candidates with the skills and knowledge to engage productively with diverse communities.</p>
+<p>Applicants who need an accommodation at any stage of the application process because of a disability or for another reason are invited to contact Dr. Okolie at <a href="mailto:__EMAIL__?subject=Accommodation%20request" style="color:#FFB27A">__EMAIL__</a>. Requests are handled confidentially.</p></div>
+</div></section>
 
 <section id="apply"><div class="wrap" style="max-width:880px">
 <span class="tag">Application form</span><h2>Apply for a research assistant position</h2>
@@ -281,11 +290,15 @@ def hiring_body(email):
 <div class="f"><label for="aiStatement">AI usage statement <small>— which tools, for which document(s), and for what. If none, write “No AI tools were used.”</small></label><textarea id="aiStatement" name="aiStatement" required maxlength="3000"></textarea></div>
 <label class="opt" style="flex:none"><input type="checkbox" name="aiConfirm" value="yes" required><span>I confirm that this AI usage statement is complete and accurate.</span></label>
 </fieldset>
+<fieldset><legend>Time at Bucknell University</legend>
+<label class="opt" style="flex:none"><input type="checkbox" name="bucknellOk" value="yes" required><span>I understand that some aspects of the project will be performed at Bucknell University (Lewisburg, Pennsylvania, USA), and I am willing to spend some time there.</span></label>
+</fieldset>
 <button type="submit" id="f-submit" class="btn pri">Submit application</button>
 <div id="f-msg" class="f-msg" role="status" aria-live="polite"></div>
 </form>
 <p class="muted" style="font-size:14px;margin-top:18px">Your documents are stored privately in the SETD group's Google Drive and used only to assess your application. Questions? Email <a href="mailto:{email}?subject=Graduate%20research%20assistant%20positions">{email}</a>.</p>
 </div></section>
 """
+    body = body.replace("__EMAIL__", email)
     js = SCRIPT.replace("__ENDPOINT__", HIRING_ENDPOINT).replace("__EMAIL__", email)
     return body + js
