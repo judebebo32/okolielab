@@ -8,7 +8,7 @@ The script itself is in src/hiring/apps-script.gs.
 import html
 E = html.escape
 
-HIRING_ENDPOINT = ""
+HIRING_ENDPOINT = "https://script.google.com/macros/s/AKfycbwciD19uBS2pJPk2f79ebxQiVkr0lR8eSnF7ELGdNC8KIQT_3PU5T77aSvOteYF9QZf6A/exec"
 
 PROJECTS = [
     {

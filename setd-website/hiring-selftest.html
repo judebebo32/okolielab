@@ -1,0 +1,5 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>selftest</title></head><body><p id="r">running…</p><script>
+(async()=>{const f={name:"test.pdf",data:"JVBERi0xLjQKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqIDIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iaiAzIDAgb2JqPDwvVHlwZS9QYWdlL1BhcmVudCAyIDAgUi9NZWRpYUJveFswIDAgNjEyIDc5Ml0+PmVuZG9iagp0cmFpbGVyPDwvUm9vdCAxIDAgUj4+CiUlRU9GCg=="};
+try{const r=await fetch("https://script.google.com/macros/s/AKfycbwciD19uBS2pJPk2f79ebxQiVkr0lR8eSnF7ELGdNC8KIQT_3PU5T77aSvOteYF9QZf6A/exec",{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({name:"TEST – please delete",email:"test@example.com",degree:"PhD",institution:"Website self-test",projects:"Project 1: Autonomous critical-mineral recovery",aiUsed:"No",aiStatement:"No AI tools were used. (Automated test submission)",aiConfirm:true,website:"",coverLetter:f,cv:f,proposal:f})});
+document.getElementById("r").textContent="RESULT "+await r.text();}catch(e){document.getElementById("r").textContent="ERROR "+e;}})();
+</script></body></html>
