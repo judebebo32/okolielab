@@ -195,3 +195,4 @@ a.chip:hover{border-color:var(--orange)}
   .hero .wrap{padding-top:64px;padding-bottom:64px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+[id]{scroll-margin-top:96px}

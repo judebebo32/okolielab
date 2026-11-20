@@ -1,4 +1,4 @@
-"""Student Hiring page (MSc / PhD research assistant positions with McGill University).
+"""Student Hiring page (MSc / PhD research assistant positions based at McGill University).
 
 HIRING_ENDPOINT is the Google Apps Script web-app URL (ends in /exec) that saves
 applications to Google Drive and the response spreadsheet. While it is empty the
@@ -40,14 +40,15 @@ PROJECTS = [
         "title": "A continuous system using functionalized porous materials for rare earth metal recovery from heterogeneous streams",
         "img": "lab-ozone.jpg",
         "img2": "lab-bet.jpg",
-        "lede": "Rare earth elements are present at low concentrations in complex streams such as industrial and mining wastewaters and electronic-waste leachates, alongside many competing ions and solids. This project will develop functionalized porous adsorbents and a continuous-flow system that captures rare earths selectively and can be regenerated and reused.",
+        "lede": "Rare earth elements are present at low concentrations in complex streams such as industrial and mining wastewaters and electronic-waste leachates, alongside many competing ions and solids. This project will develop functionalized porous adsorbents and a continuous-flow system that captures rare earths selectively and can be regenerated and reused. As its final deliverable, the project will turn this system into an autonomous experiment that runs, measures and optimizes the separation on its own.",
         "do": [
             "Synthesize and functionalize porous materials (e.g., biomass-derived carbons, biochar and metal–organic frameworks) with groups that bind rare earth ions selectively.",
             "Characterize the materials by surface area and porosity analysis, spectroscopy and microscopy.",
             "Run batch and continuous fixed-bed tests on realistic multi-component streams, measuring breakthrough, selectivity, elution and regeneration.",
             "Build transport and process models to scale up the column design and assess cost and environmental impact.",
+            "Final deliverable: automate the continuous system into an autonomous experiment, with in-line sensing and machine-learning-guided optimization of adsorption and regeneration.",
         ],
-        "skills": ["Materials synthesis", "Adsorption", "Flow systems", "Characterization", "Process modelling", "TEA / LCA"],
+        "skills": ["Materials synthesis", "Adsorption", "Flow systems", "Characterization", "Lab automation &amp; ML", "Process modelling", "TEA / LCA"],
         "works": [
             ("Activated Carbon: Synthesis, Analysis, and Industrial Applications", "Book, Elsevier", "https://doi.org/10.1016/C2022-0-02853-1"),
             ("Advances in the applications of nanomaterials for wastewater treatment", "Environments, 2022", "https://doi.org/10.3390/environments9110141"),
@@ -70,7 +71,7 @@ STYLE = """
 .hire-collage{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hire-collage img{width:100%;height:100%;object-fit:cover;border-radius:12px;aspect-ratio:1}
 .hire-collage img:first-child{grid-column:span 2;aspect-ratio:16/9}
-.hire-glance{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.hire-glance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .hire-glance div{border-top:3px solid var(--orange);padding-top:14px}
 .hire-glance b{display:block;color:var(--navy);font-size:18px;margin-bottom:4px}
 .hire-glance p{margin:0;color:var(--muted);font-size:15px}
@@ -222,8 +223,8 @@ def hiring_body(email):
 <div class="hire-hero"><div class="wrap">
 <div><span class="tag">Now hiring · Research assistants</span>
 <h1>Recover the metals the energy transition runs on</h1>
-<p>The SETD Research Group, in collaboration with McGill University, is recruiting graduate research assistants for two projects on recovering critical and rare earth metals from waste.</p>
-<div class="hire-badges"><span><b>2</b> positions</span><span>MSc or PhD</span><span>Fully funded</span><span>McGill University</span></div>
+<p>The SETD Research Group is recruiting graduate research assistants for two projects on recovering critical and rare earth metals from waste. McGill University will be the students' primary home.</p>
+<div class="hire-badges"><span><b>2</b> positions</span><span>MSc or PhD</span><span>Fully funded</span><span>Based at McGill University</span></div>
 <div class="btns"><a class="btn pri" href="#apply">Apply now</a><a class="btn" href="#projects">See the projects</a></div></div>
 <div class="hire-collage"><img src="img/aiche26-group.jpg" alt="SETD students at the AIChE Annual Meeting"><img src="img/lab-uv-vis.jpg" alt="UV-Vis spectrophotometer in the SETD lab"><img src="img/aiche26-reed-muir.jpg" alt="SETD student presenting battery-recycling research"></div>
 </div></div>
@@ -231,14 +232,13 @@ def hiring_body(email):
 <section><div class="wrap">
 <div class="hire-glance">
 <div><b>Two projects</b><p>Autonomous critical-mineral recovery from spent lithium batteries, and continuous rare earth recovery with functionalized porous materials.</p></div>
-<div><b>MSc or PhD</b><p>Both degree levels are open. Students enroll at McGill University.</p></div>
+<div><b>MSc or PhD at McGill</b><p>Both degree levels are open. McGill University is the student's primary home: students enroll in and are based at McGill.</p></div>
 <div><b>Fully funded</b><p>Positions include a stipend and tuition.</p></div>
-<div><b>Joint supervision</b><p>Work with the SETD group (Dr. Jude A. Okolie, Bucknell University) in collaboration with McGill University.</p></div>
 </div></div></section>
 
 <section id="projects" style="padding-top:0"><div class="wrap">
 <span class="tag">The projects</span><h2>Two ways to make critical materials circular</h2>
-<p class="muted" style="max-width:70ch">Both projects combine experiments with data science and process modelling, and both build directly on the group's work on spent-battery upcycling, adsorbent materials and AI-guided design.</p>
+<p class="muted" style="max-width:70ch">Both projects combine experiments with data science and process modelling, both lead to autonomous experimental platforms, and both build directly on the group's work on spent-battery upcycling, adsorbent materials and AI-guided design.</p>
 {projects}
 </div></section>
 

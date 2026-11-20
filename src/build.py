@@ -8,7 +8,7 @@ E = html.escape
 
 EMAIL = "jude.okolie@bucknell.edu"
 LINKS = [("Google Scholar","https://scholar.google.com/citations?user=G-_iMkoAAAAJ&hl=en&oi=ao"),("ORCID","https://orcid.org/0000-0001-7506-551X"),("LinkedIn","https://www.linkedin.com/in/judeaokolie/"),("ResearchGate","https://www.researchgate.net/profile/Jude-Okolie")]
-NAV = [("index.html","Home"),("research.html","Research"),("people.html","People"),("facilities.html","Facilities"),("publications.html","Publications"),("teaching.html","Teaching"),("outreach.html","Outreach"),("news.html","News"),("about.html","About"),("contact.html","Contact"),("student-hiring.html","Student Hiring")]
+NAV = [("index.html","Home"),("research.html","Research"),("people.html","People"),("facilities.html","Facilities"),("publications.html","Publications"),("teaching.html","Teaching"),("outreach.html","Outreach"),("news.html","News"),("about.html","About &amp; Contact"),("student-hiring.html","Student Hiring")]
 
 def ext(t,u,cls=""):
     c=f' class="{cls}"' if cls else ""
@@ -359,7 +359,7 @@ def build():
     # ABOUT
     ab=(CONTENT/"about.md").read_text().split("## Home intro")[0].split("\n",1)[1]
     abp=md_paras(ab)
-    about=hero("About","Dr. Jude A. Okolie","Assistant Professor of Chemical Engineering, Bucknell University.")+f"""
+    about=hero("About &amp; Contact","Dr. Jude A. Okolie","Assistant Professor of Chemical Engineering, Bucknell University. <a href=\"#contact\" style=\"color:inherit\">Contact details ↓</a>")+f"""
 <section><div class="wrap split" style="align-items:start"><img src="img/okolie-portrait.jpg" alt="Dr. Jude A. Okolie" style="aspect-ratio:1">
 <div><span class="tag">Career profile</span><h2>Education</h2><ul class="list"><li><b>Ph.D., Chemical Engineering</b> · University of Saskatchewan<br><span class="muted">Thesis: Supercritical water gasification of lignocellulosic biomass materials for hydrogen production.</span></li><li><b>M.Sc., Materials and Sustainable Energetics</b> · Tallinn University of Technology, Estonia</li><li><b>M.Sc., Petroleum Engineering</b> · Imperial College London</li><li><b>B.Eng., Chemical Engineering</b> · University of Benin, Nigeria</li></ul>
 <h2 style="margin-top:36px">Experience</h2><ul class="list"><li><b>Assistant Professor</b>, Bucknell University <span class="muted">· Aug 2024 – present</span></li><li><b>Assistant Professor</b>, University of Oklahoma <span class="muted">· Aug 2022 – Jul 2024</span></li><li><b>Research Engineer</b>, Saskatchewan Research Council <span class="muted">· May 2022 – Aug 2022</span></li><li><b>Faculty</b>, St. Peter's College, Muenster <span class="muted">· Jun 2021 – Jul 2022</span></li><li><b>Postdoctoral Fellow</b>, University of Saskatchewan <span class="muted">· Jun 2021 – Jul 2022</span></li></ul></div></div></section>
@@ -367,13 +367,12 @@ def build():
 <div><span class="tag">Memberships</span><h2>Professional memberships</h2><ul class="list"><li>American Society for Engineering Education (ASEE)</li><li>Canadian Society for Chemical Engineering (CSChE)</li><li>Association of Professional Engineers and Geoscientists of Saskatchewan (APEGS)</li><li>Nigerian Society of Engineers (NSE)</li></ul>
 <h2 style="margin-top:36px">Service</h2><ul class="list"><li>Guest Editor, <em>Fermentation</em></li><li>Reviewer for ACS, Elsevier, RSC, Springer Nature and Wiley journals</li></ul>
 <h2 style="margin-top:36px">Profiles</h2><div class="chips">{"".join(ext(t,u,"chip") for t,u in LINKS)}</div></div></div></section>"""
+    about+=f"""<section id="contact" style="background:var(--tint)"><div class="wrap cols"><div><span class="tag">Contact</span><h2>Dr. Jude A. Okolie</h2><ul class="list"><li><b>Email</b><br><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><b>Address</b><br>Department of Chemical Engineering, Bucknell University<br>One Dent Drive, Lewisburg, PA 17837</li></ul><div class="chips" style="margin-top:24px">{"".join(ext(t,u,"chip") for t,u in LINKS)}</div></div>
+<div class="callout"><span class="tag">Join us</span><h2 style="font-size:clamp(26px,3vw,36px)">Interested in joining SETD?</h2><p class="muted">We welcome inquiries from Bucknell undergraduates looking for research experience, prospective graduate students and postdocs, and industry and academic collaborators. Send a short note on your research interests along with your CV.</p><div class="btns"><a class="btn pri" href="mailto:{EMAIL}?subject=SETD%20research%20inquiry">Email Dr. Okolie</a><a class="btn" href="student-hiring.html">Open MSc &amp; PhD positions</a></div></div></div></section>"""
     page("about.html","About Dr. Jude A. Okolie · SETD Research Group","Biography, education and experience of Dr. Jude A. Okolie.",about)
 
     # CONTACT
-    contact=hero("Contact","Get in touch","Prospective students, collaborators and media are welcome to reach out.")+f"""
-<section><div class="wrap cols"><div><span class="tag">Contact</span><h2>Dr. Jude A. Okolie</h2><ul class="list"><li><b>Email</b><br><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><b>Address</b><br>Department of Chemical Engineering, Bucknell University<br>One Dent Drive, Lewisburg, PA 17837</li></ul><div class="chips" style="margin-top:24px">{"".join(ext(t,u,"chip") for t,u in LINKS)}</div></div>
-<div class="callout"><span class="tag">Join us</span><h2 style="font-size:clamp(26px,3vw,36px)">Interested in joining SETD?</h2><p class="muted">We welcome inquiries from Bucknell undergraduates looking for research experience, prospective graduate students and postdocs, and industry and academic collaborators. Send a short note on your research interests along with your CV.</p><div class="btns"><a class="btn pri" href="mailto:{EMAIL}?subject=SETD%20research%20inquiry">Email Dr. Okolie</a><a class="btn" href="student-hiring.html">Open MSc &amp; PhD positions</a></div></div></div></section>"""
-    page("contact.html","Contact · SETD Research Group","Contact Dr. Jude A. Okolie and the SETD Research Group.",contact)
+    (OUT/"contact.html").write_text('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Contact · SETD Research Group</title><link rel="canonical" href="about.html#contact"><meta http-equiv="refresh" content="0; url=about.html#contact"></head><body><p><a href="about.html#contact">Contact details</a></p></body></html>',encoding="utf-8")
 
     page("student-hiring.html","Student Hiring · Graduate Research Assistants (MSc/PhD) · SETD Research Group","Fully funded MSc and PhD research assistant positions with the SETD group in collaboration with McGill University: critical mineral recovery from spent lithium batteries and rare earth recovery.",hiring_body(EMAIL))
 
