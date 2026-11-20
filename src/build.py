@@ -108,7 +108,10 @@ def linkify(t):
     t=re.sub(r"(Publications|Work|Thesis):\s*(<a )", r"\2", t)
     return t
 
-FAC = [  # img, title, key spec, description(list of paragraphs or bullets)
+FAC = [
+ ("lab-digital-shaker.jpg","High-precision temperature-controlled digital shaker","Large-scale green solvent synthesis",
+  ["A high-precision, temperature-controlled digital shaker with a large platform of flask clamps, recently added to the SETD lab.",
+   "It provides controlled agitation at a set temperature for many flasks at once, supporting larger-scale synthesis of green solvents for the group's critical metal recovery and battery upcycling research."]),  # img, title, key spec, description(list of paragraphs or bullets)
  ("lab-htl-reactor.jpg","Hydrothermal liquefaction (HTL) reactor","250–374 °C · up to 200 bar",
   ["A lab-scale hydrothermal liquefaction reactor: an advanced high-pressure, high-temperature system designed to convert wet biomass, plastics, or organic waste into bio-crude oil and valuable chemicals under subcritical or supercritical water conditions.",
    "Operated typically between 250–374 °C and at pressures up to 200 bar, it allows researchers to simulate industrial hydrothermal processes on a laboratory scale, enabling precise control of reaction conditions such as temperature, pressure, residence time, and stirring speed to optimize product yields and study reaction mechanisms. This setup is crucial for sustainable fuel research, waste valorization, and developing carbon-neutral energy pathways."]),
@@ -146,7 +149,7 @@ AICHE_GALLERY = [("aiche26-group.jpg","At the 2026 AIChE Annual Meeting in Minne
 NEWS = [
  (["news-colloquium-2026.jpg","news-colloquium-2026-wide.jpg"],"November 17, 2026","Dr. Okolie gives a faculty colloquium at Bucknell University",
   "Dr. Okolie presented a faculty colloquium at Bucknell University titled <em>One Solution Two Problems: A Systems Approach to Spent Lithium-Ion Battery Recycling</em>.",None),
- ([],"November 2026","New high-precision temperature-controlled digital shaker for the SETD lab",
+ (["lab-digital-shaker.jpg"],"November 2026","New high-precision temperature-controlled digital shaker for the SETD lab",
   "The SETD lab has acquired a high-precision, temperature-controlled digital shaker. The new instrument will support larger-scale synthesis of green solvents in the lab.",None),
  (["jquizz-app.jpg"],"November 2026","Dr. Okolie presents JQUIZZ, an AI-driven app for teaching differential equations, at AIChE 2026",
   "At the 2026 AIChE Annual Meeting, Dr. Okolie presented <em>JQUIZZ: An Intuitive AI-Driven, Practice-Based App for Teaching ChemE Differential Equations</em> (paper 488e) in the Education Division session \u201cFostering Engineering Judgement with AI.\u201d JQUIZZ is a mobile and web app for advanced differential equations courses for chemical engineers. It offers short, targeted practice problems that adapt to each student's performance and are drawn from real engineering scenarios such as reactor dynamics, heat transfer and material balances. Its built-in AI engine generates problems, gives step-by-step solution guidance and evaluates answers in real time; tested on 350 solved differential equation problems, it reached about 90% solution accuracy. Instructor dashboards support automated assessment and tracking of learning gains. <a href=\"https://jquizz-2529f.web.app\" target=\"_blank\" rel=\"noopener\">Try the JQUIZZ app \u2192</a>","https://studio.m-anage.com/aiche/2026/prelim.cgi/Paper/728339"),
