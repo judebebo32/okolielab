@@ -261,7 +261,7 @@ def page_landing():
 <div class="btns" style="margin-top:24px"><a class="btn pri" href="rubiks-cube-3x3.html">Learn the 3×3</a><a class="btn" href="rubiks-cube-request.html">Request a tutorial or cube</a></div></div>
 <div class="cube-hero-art">{svg_3x3("scrambled", 230)}</div></div></div>
 <section><div class="wrap cols" style="align-items:start"><div><span class="tag">A hobby that teaches</span><h2>Why a cube?</h2>
-<p class="muted">Dr. Okolie has used the Rubik's cube to explain complex topics, and he has delivered a talk comparing process simulators to solving a Rubik's cube.</p>
+<p class="muted">Dr. Okolie has used the Rubik's cube to explain complex topics, and he has delivered a talk titled <em>Understanding Process Simulators with the Rubik's Cube</em>, which compares working with a process simulator to solving a cube.</p>
 <p class="muted">The two have a lot in common. A cube is a system of connected parts: turn one face and pieces on four other faces move with it. A process flowsheet works the same way, where changing one unit changes the streams going into the next. In both, it helps to break a big problem into stages, use a small set of tested moves, and check the state of the whole system after every step.</p></div>
 <div class="steps cube-parallels"><div class="step"><span>Cube</span><b>Layer by layer</b><p>Solve one layer, then keep it safe while you work on the next.</p></div>
 <div class="step"><span>Simulator</span><b>Unit by unit</b><p>Converge one unit operation, then connect it to the rest of the flowsheet.</p></div>
@@ -269,7 +269,10 @@ def page_landing():
 <div class="step"><span>Simulator</span><b>Models</b><p>Validated unit models and solvers you can trust to behave the same way every time.</p></div></div></div></section>
 <section class="tint"><div class="wrap"><span class="tag">Tutorials</span><h2>Pick a puzzle</h2><p class="lede">Each tutorial uses a beginner method with only a few algorithms to memorise. New to cubing? Start with the 2×2 or the 3×3.</p>
 <div class="cards cube-cards">{cards}</div></div></section>
-<section><div class="wrap"><span class="tag">Before you start</span><h2>Tips for every puzzle</h2><div class="eq">
+<section><div class="wrap"><span class="tag">Gallery</span><h2>Solved and ready</h2><div class="gallery cube-gallery">
+<figure><img src="img/cube-4x4-solved.jpg" alt="A young cuber smiling and holding up a solved 4×4 cube" loading="lazy"><figcaption>A solved 4×4: centres, paired edges, then the 3×3 finish.</figcaption></figure>
+<figure><img src="img/cube-mirror-face.jpg" alt="A hand holding a mirror cube showing a flat face made of different-sized silver pieces, with the centre marked in pink" loading="lazy"><figcaption>One face of a mirror cube. Every piece is a different size, and the centre has been marked with a pen.</figcaption></figure></div></div></section>
+<section class="tint"><div class="wrap"><span class="tag">Before you start</span><h2>Tips for every puzzle</h2><div class="eq">
 <article><div><h3>Learn the notation first</h3><p>Every tutorial writes moves as letters (R, U, F and so on). Five minutes on the notation table saves an hour of confusion.</p></div></article>
 <article><div><h3>Keep your grip</h3><p>Hold the puzzle the same way for a whole algorithm. Most mistakes come from rotating the cube in the middle of a sequence.</p></div></article>
 <article><div><h3>Go slowly, then repeat</h3><p>Do each algorithm slowly until your hands remember it. Speed comes later, by itself.</p></div></article></div></div></section>""" + cta()
@@ -361,9 +364,9 @@ def page_mirror():
              "<p>The mirror cube is a 3×3 in disguise. Inside, it turns exactly like a Rubik's cube, but every layer is cut at a different thickness and all faces have the same mirror finish. Instead of colours, you identify pieces by their <b>size and shape</b>.</p>"
              "<p>Like the 3×3, there are six centres, twelve edges and eight corners, and the centres never move relative to each other. A piece is solved when its outer surfaces sit flush with its neighbours.</p>",
              "Solved: a perfect cube again"),
-        step(2, "Pick your \"white\" face", None,
+        step(2, "Pick your \"white\" face", '<img class="cube-photo" src="img/cube-mirror-face.jpg" alt="A mirror cube face with a pen mark on the centre" loading="lazy">',
              "<p>Choose one face to solve first. A face whose centre is easy to recognise, such as the thinnest one, is a good choice. Build a cross on that face: find the four edges whose height matches the face's centre and line each one up so both of its surfaces are flush with the centres it touches.</p>",
-             "Scrambled: steps and ledges show which pieces are out of place"),
+             "Tip: a small pen mark on one centre helps you find your starting face again"),
         step(3, "Follow the 3×3 method", None,
              "<p>From here, follow the <a href=\"rubiks-cube-3x3.html\">3×3 tutorial</a> step by step, using the same algorithms. Wherever it says \"match the colours\", match the heights instead:</p>"
              "<ul><li><b>Corners and middle layer:</b> a corner or edge belongs in a slot when all of its surfaces line up flush with the centres around it.</li>"
@@ -387,7 +390,7 @@ def page_4x4():
              "<p>Hold white on top. Find two matching edge pieces and put them both in the <b>upper of the two middle rows</b>: one on the left edge of the front face, one on the right edge, <b>both showing the same colour on the front</b>. Then do:</p>"
              f"<p class='alg-line'>{alg(A['pair'])}</p><p>The pair is now finished at the front-right. Move it into the top or bottom layer with outer turns and repeat. If the piece on the right shows the wrong colour on the front, {alg(A['flip'])} flips the front-right edge in place. For the final two edges, the same algorithm finishes both at once when the lower halves match too.</p>",
              "Goal: centres solved and every edge paired"),
-        step(3, "Solve it like a 3×3", svg_4x4("solved"),
+        step(3, "Solve it like a 3×3", '<img class="cube-photo" src="img/cube-4x4-solved.jpg" alt="A young cuber holding up a solved 4×4 cube" loading="lazy">',
              "<p>Now treat each 2×2 centre as one centre and each pair as one edge, and follow the <a href=\"rubiks-cube-3x3.html\">3×3 tutorial</a> using outer-layer turns only. Two situations that a 3×3 can't have may appear at the end. They're called <b>parity</b>, and each has its own fix below.</p>", "Solved!"),
         step(4, "Fix OLL parity: one flipped edge", svg_4x4("oll"),
              "<p>While making the yellow cross, you might find a single edge flipped (an odd number of yellow edges point up, so you can never make the cross). Hold the flipped edge at the <b>front</b> of the top layer and do:</p>"
