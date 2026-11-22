@@ -324,7 +324,7 @@ def build():
     aw=[l[2:] for l in (CONTENT/"awards.md").read_text().split("\n") if l.startswith("- ")]
     aw=[a.replace(" (listed twice on site)","") for a in aw]
     awards_html="".join(f'<li><b>{E(a.rsplit(" — ",1)[0])}</b> <span class="muted">· {a.rsplit(" — ",1)[1]}</span></li>' for a in aw)
-    teach=hero("Teaching, awards &amp; scholarships","Teaching","Teaching philosophy, courses taught across four institutions, workshops, curriculum development, and awards.")+f"""
+    teach=hero("Teaching, awards &amp; scholarships","Teaching","Teaching philosophy, courses taught across five institutions, workshops, curriculum development, and awards.")+f"""
 <section><div class="wrap cols"><div class="prose"><span class="tag">Background</span><h2>How I came to teaching</h2>{tp_bg}</div><div class="prose"><span class="tag">Philosophy</span><h2>Teaching philosophy</h2>{tp_main}</div></div></section>
 <section><div class="wrap"><span class="tag">Courses</span><h2>Courses taught</h2>{courses_html(crs.split(chr(10),1)[1])}</div></section>
 <section id="awards"><div class="wrap"><span class="tag">Recognition</span><h2>Honors, awards &amp; scholarships</h2><ul class="list"><li><b>ACS Committee on Environment and Sustainability (CES) Award for Incorporating Sustainability into Chemical Education</b> <span class="muted">· 2026</span></li><li><b>Encyclopedia Outstanding Contributor Award (MDPI)</b> <span class="muted">· 2023</span></li>{awards_html}</ul></div></section>"""

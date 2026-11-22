@@ -1,5 +1,13 @@
 # Courses taught (verbatim)
 
+## Bucknell University: Teaching Responsibilities
+- Material Science
+- Sustainable Energy Systems
+- Data Science for Chemical Engineers
+- Data Science for Engineering Design
+- Advanced Mathematics for Chemical Engineers
+- Fluid Mechanics for Engineers
+
 ## University of Oklahoma: Teaching Responsibilities
 - ENGR 1411: Engineering Thinking
 - ENGR 2002: Professional development
