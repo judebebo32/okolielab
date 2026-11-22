@@ -9,7 +9,7 @@ E = html.escape
 
 EMAIL = "jude.okolie@bucknell.edu"
 LINKS = [("Google Scholar","https://scholar.google.com/citations?user=G-_iMkoAAAAJ&hl=en&oi=ao"),("ORCID","https://orcid.org/0000-0001-7506-551X"),("LinkedIn","https://www.linkedin.com/in/judeaokolie/"),("ResearchGate","https://www.researchgate.net/profile/Jude-Okolie")]
-NAV = [("index.html","Home"),("research.html","Research"),("people.html","People"),("facilities.html","Facilities"),("publications.html","Publications"),("teaching.html","Teaching"),("outreach.html","Outreach"),("rubiks-cube.html","Rubik's Cube"),("news.html","News"),("about.html","About &amp; Contact"),("student-hiring.html","Student Hiring")]
+NAV = [("index.html","Home"),("research.html","Research"),("people.html","People"),("facilities.html","Facilities"),("publications.html","Publications"),("teaching.html","Teaching"),("outreach.html","Outreach"),("rubiks-cube.html","Puzzle Corner"),("news.html","News"),("about.html","About &amp; Contact"),("student-hiring.html","Student Hiring")]
 
 def ext(t,u,cls=""):
     c=f' class="{cls}"' if cls else ""

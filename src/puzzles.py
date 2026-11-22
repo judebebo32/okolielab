@@ -9,7 +9,7 @@ right layers), r (inner right slice only), x y z whole-cube rotations.
 Pyraminx: U L R B turn two layers around that vertex clockwise (seen looking at
 the vertex); u l r b turn only the tip.
 """
-import math, re
+import math, re, itertools
 
 # ---------------- NxN cube ----------------
 FACES = {"U": (0, 1, 0), "D": (0, -1, 0), "R": (1, 0, 0), "L": (-1, 0, 0), "F": (0, 0, 1), "B": (0, 0, -1)}
@@ -298,3 +298,193 @@ def pyra_svg(pyr, mask=None, size=170, label=""):
         fill = PCOLOR[col] if not mask or mask(pyr, p, col) != "X" else COLOR["X"]
         out.append(f'<polygon points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts)}" fill="{fill}" stroke="#1d2330" stroke-width="2.5" stroke-linejoin="round"/>')
     return _fit_svg(out, size, label)
+
+# ---------------- generic sticker puzzles (Megaminx, Helicopter cube) ----------------
+def _unit(v):
+    l = math.sqrt(sum(x * x for x in v)); return tuple(x / l for x in v)
+
+def _dot(a, b): return sum(x * y for x, y in zip(a, b))
+
+def _rotate(p, axis, ang):
+    ux, uy, uz = axis; c, s = math.cos(ang), math.sin(ang); d = _dot(p, axis)
+    cx = (uy * p[2] - uz * p[1], uz * p[0] - ux * p[2], ux * p[1] - uy * p[0])
+    return tuple(p[i] * c + cx[i] * s + axis[i] * d * (1 - c) for i in range(3))
+
+class GeoPuzzle:
+    """Stickers at fixed 3D points; a move turns every sticker whose depth along a move
+    axis exceeds a threshold. Moves are stored as index permutations for speed."""
+    def __init__(self, pts, colors, axes, depth, ang_unit):
+        self.pts = pts; self.home = list(colors); self.state = list(colors)
+        self.axes = axes; self.perms = {}
+        for name, (axis, q) in axes.items():
+            ang = -ang_unit * q                       # clockwise seen from outside
+            perm = list(range(len(pts)))
+            for i, p in enumerate(pts):
+                if _dot(p, axis) > depth:
+                    r = _rotate(p, axis, ang)
+                    j = min(range(len(pts)), key=lambda k: sum((pts[k][t] - r[t]) ** 2 for t in range(3)))
+                    perm[j] = i                       # new[j] = old[i]
+            assert sorted(perm) == list(range(len(pts))), name
+            self.perms[name] = perm
+
+    def copy(self):
+        c = GeoPuzzle.__new__(GeoPuzzle); c.__dict__ = dict(self.__dict__); c.state = list(self.state); return c
+
+    def apply(self, alg):
+        for mv in alg.split():
+            p = self.perms[mv]; s = self.state; self.state = [s[p[j]] for j in range(len(s))]
+        return self
+
+    def solved(self): return self.state == self.home
+
+PHI = (1 + 5 ** .5) / 2
+
+def make_megaminx():
+    """Megaminx with face names. Upper ring around U: F, R, BR, BL, L (going right from the front);
+    lower ring: DR (below F/R), DBR, DB, DBL, DL (below F/L); D at the bottom."""
+    N = []
+    for s1 in (1, -1):
+        for s2 in (1, -1):
+            N += [_unit((0, s1 * PHI, s2)), _unit((s2, 0, s1 * PHI)), _unit((s1 * PHI, s2, 0))]
+    V = [s for s in itertools.product((1, -1), repeat=3)]
+    for s1 in (1, -1):
+        for s2 in (1, -1):
+            V += [(0, s1 / PHI, s2 * PHI), (s1 / PHI, s2 * PHI, 0), (s2 * PHI, 0, s1 / PHI)]
+    U = N[0]
+    ring = [n for n in N if abs(_dot(n, U) - 1 / 5 ** .5) < 1e-6]
+    F = ring[0]
+    def ang(n, up):   # angle of n around axis up, measured clockwise seen from above (from +up)
+        x = _unit(tuple(F[i] - up[i] * _dot(F, up) for i in range(3)))
+        y = (up[1] * x[2] - up[2] * x[1], up[2] * x[0] - up[0] * x[2], up[0] * x[1] - up[1] * x[0])
+        return math.atan2(_dot(n, y), _dot(n, x)) % (2 * math.pi)
+    ring.sort(key=lambda n: ang(n, U))
+    names = dict(zip(["F", "R", "BR", "BL", "L"], ring))
+    low = [n for n in N if abs(_dot(n, U) + 1 / 5 ** .5) < 1e-6]
+    upper = dict(names)
+    def touching(n): return {k for k, m in upper.items() if abs(_dot(n, m) - 1 / 5 ** .5) < 1e-6}
+    lname = {frozenset({"F", "R"}): "DR", frozenset({"R", "BR"}): "DBR", frozenset({"BR", "BL"}): "DB", frozenset({"BL", "L"}): "DBL", frozenset({"L", "F"}): "DL"}
+    for n in low: names[lname[frozenset(touching(n))]] = n
+    names["U"] = U; names["D"] = tuple(-x for x in U)
+    pts, cols, piece = [], [], []
+    rk = lambda v: tuple(round(x, 4) for x in v)
+    for fname, n in names.items():
+        fv = sorted(V, key=lambda v: -_dot(v, n))[:5]
+        c = tuple(sum(v[i] for v in fv) / 5 for i in range(3))
+        pts.append(c); cols.append(fname); piece.append(("c", fname))
+        for v in fv:
+            pts.append(tuple(c[i] + .72 * (v[i] - c[i]) for i in range(3))); cols.append(fname); piece.append(("v", rk(v)))
+        for a, b in itertools.combinations(fv, 2):
+            if abs(math.dist(a, b) - 2 / PHI) < 1e-6:
+                m = tuple((a[i] + b[i]) / 2 for i in range(3))
+                pts.append(tuple(c[i] + .82 * (m[i] - c[i]) for i in range(3))); cols.append(fname); piece.append(("e", rk(m)))
+    axes = {}
+    for fname, n in names.items():
+        axes[fname] = (n, 1); axes[fname + "'"] = (n, -1)
+        axes[fname + "2"] = (n, 2); axes[fname + "2'"] = (n, -2)
+    g = GeoPuzzle(pts, cols, axes, 1.0, 2 * math.pi / 5)
+    g.names = names; g.piece = piece
+    faces_of = {}
+    for i, k in enumerate(piece): faces_of.setdefault(k, set()).add(cols[i])
+    g.piece_faces = [frozenset(faces_of[k]) for k in piece]   # faces of the piece each sticker slot belongs to
+    return g
+
+HELI_EDGES = {"UF": (0, 1, 1), "UR": (1, 1, 0), "UB": (0, 1, -1), "UL": (-1, 1, 0), "DF": (0, -1, 1), "DR": (1, -1, 0),
+              "DB": (0, -1, -1), "DL": (-1, -1, 0), "FR": (1, 0, 1), "FL": (-1, 0, 1), "BR": (1, 0, -1), "BL": (-1, 0, -1)}
+
+def make_helicopter():
+    """Helicopter cube on [-1,1]^3. Each face: 4 corner triangles and 4 centre triangles.
+    A move (named after an edge, e.g. UF) turns that edge's half 180 degrees."""
+    pts, cols = [], []
+    for fname, nv in FACES.items():
+        ax = [i for i in range(3) if nv[i]][0]; o = [i for i in range(3) if i != ax]
+        for a in (1, -1):
+            for b in (1, -1):
+                for t in (2 / 3, 1 / 3):            # corner triangle, then centre triangle
+                    p = [0.0, 0.0, 0.0]; p[ax] = float(nv[ax]); p[o[0]] = a * t; p[o[1]] = b * t
+                    pts.append(tuple(p)); cols.append(fname)
+    axes = {k: (_unit(v), 1) for k, v in HELI_EDGES.items()}
+    return GeoPuzzle(pts, cols, axes, 1 / 2 ** .5 + 1e-6, math.pi)
+
+# ---------------- drawing: Megaminx and Helicopter ----------------
+MEGA_COLOR = {"U": "#D7DCE2", "D": "#FFFFFF", "F": "#009E60", "R": "#C41E3A", "BR": "#0051BA", "BL": "#FFD500", "L": "#7B3FA0",
+              "DR": "#FF8FC7", "DBR": "#8BD346", "DB": "#FF5800", "DBL": "#5BC0EB", "DL": "#C68E4E", "X": "#5B6573"}
+
+def _cross(a, b): return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
+
+def _mega_polys(g):
+    """3D sticker polygons for a Megaminx built by make_megaminx: list of (face, polygon, sticker index)."""
+    V = [s for s in itertools.product((1, -1), repeat=3)]
+    for s1 in (1, -1):
+        for s2 in (1, -1):
+            V += [(0, s1 / PHI, s2 * PHI), (s1 / PHI, s2 * PHI, 0), (s2 * PHI, 0, s1 / PHI)]
+    out = []
+    for fname, nrm in g.names.items():
+        fv = sorted(V, key=lambda v: -_dot(v, nrm))[:5]
+        c = tuple(sum(v[i] for v in fv) / 5 for i in range(3))
+        x = _unit(tuple(fv[0][i] - c[i] for i in range(3))); y = _cross(nrm, x)
+        fv.sort(key=lambda v: math.atan2(_dot(tuple(v[i] - c[i] for i in range(3)), y), _dot(tuple(v[i] - c[i] for i in range(3)), x)))
+        a = .5
+        q = [tuple(c[i] + a * (v[i] - c[i]) for i in range(3)) for v in fv]
+        def inter(p1, p2, p3, p4):   # line p1p2 with line p3p4 (coplanar)
+            d1 = tuple(p2[i] - p1[i] for i in range(3)); d2 = tuple(p4[i] - p3[i] for i in range(3))
+            w = tuple(p3[i] - p1[i] for i in range(3)); cr = _cross(d1, d2); cc = _dot(cr, cr)
+            t = _dot(_cross(w, d2), cr) / cc
+            return tuple(p1[i] + t * d1[i] for i in range(3))
+        X, Y = [], []
+        for i in range(5):
+            X.append(inter(q[i - 1], q[i], fv[i], fv[(i + 1) % 5]))   # line through q[i-1],q[i] meets edge v_i v_{i+1}
+            Y.append(inter(q[(i + 1) % 5], q[i], fv[i - 1], fv[i]))    # line through q[i+1],q[i] meets edge v_{i-1} v_i
+        polys = [q]
+        for i in range(5):
+            polys.append([fv[i], X[i], q[i], Y[i]])
+            polys.append([X[i], Y[(i + 1) % 5], q[(i + 1) % 5], q[i]])
+        idx = [k for k in range(len(g.pts)) if g.home[k] == fname]
+        for poly in polys:
+            cen = tuple(sum(p[i] for p in poly) / len(poly) for i in range(3))
+            k = min(idx, key=lambda k: sum((g.pts[k][i] - cen[i]) ** 2 for i in range(3)))
+            out.append((fname, poly, k))
+    return out
+
+def mega_svg(g, view="top", mask=None, size=190, label=""):
+    """Orthographic picture of a Megaminx. view 'top' looks down at U and the upper ring from the front;
+    'bottom' looks up at the white D face from the front. mask(sticker_index) -> True keeps colour."""
+    U = g.names["U"]; F = g.names["F"]
+    up = U if view == "top" else tuple(-x for x in U)
+    d = _unit(tuple(.95 * up[i] + .75 * F[i] for i in range(3)))       # towards the viewer
+    sy = _unit(tuple(up[i] - d[i] * _dot(up, d) for i in range(3)))
+    sx = _cross(sy, d)
+    if view == "bottom": sx = tuple(-v for v in sx)
+    polys = []
+    for fname, poly, k in sorted(_mega_polys(g), key=lambda t: _dot(tuple(sum(p[i] for p in t[1]) / len(t[1]) for i in range(3)), d)):
+        if _dot(g.names[fname], d) <= .05: continue
+        col = g.state[k] if (mask is None or mask(k)) else "X"
+        pts = " ".join(f"{_dot(p, sx) * 50:.1f},{-_dot(p, sy) * 50:.1f}" for p in poly)
+        polys.append(f'<polygon points="{pts}" fill="{MEGA_COLOR[col]}" stroke="#1d2330" stroke-width="2.2" stroke-linejoin="round"/>')
+    return _fit_svg(polys, size, label)
+
+def heli_svg(g, size=170, label="", marks=None):
+    """Isometric picture of U, F, R of a Helicopter cube. marks: {sticker index: text} labels."""
+    s = size / 4.2; cx, cy = size / 2, size * .52
+    ex = (math.cos(math.radians(30)) * s, math.sin(math.radians(30)) * s)
+    ez = (-math.cos(math.radians(30)) * s, math.sin(math.radians(30)) * s)
+    def P(x, y, z): return (cx + x * ex[0] + z * ez[0], cy + x * ex[1] + z * ez[1] - y * s)
+    polys, labels = [], []
+    for k, p in enumerate(g.pts):
+        nv = [i for i in range(3) if abs(abs(p[i]) - 1) < 1e-9 and all(abs(p[j]) < 1 - 1e-9 for j in range(3) if j != i)]
+        if not nv: continue
+        ax = nv[0]; sgn = 1 if p[ax] > 0 else -1
+        if (ax, sgn) not in ((1, 1), (2, 1), (0, 1)): continue
+        o = [i for i in range(3) if i != ax]
+        a = 1 if p[o[0]] > 0 else -1; b = 1 if p[o[1]] > 0 else -1
+        corner = abs(p[o[0]]) > .5
+        tri2 = [(a, b), (a, 0), (0, b)] if corner else [(0, 0), (a, 0), (0, b)]
+        pts3 = []
+        for u, v in tri2:
+            q = [0.0, 0.0, 0.0]; q[ax] = float(sgn); q[o[0]] = u; q[o[1]] = v; pts3.append(P(*q))
+        d = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts3)
+        polys.append(f'<polygon points="{d}" fill="{COLOR[g.state[k]]}" stroke="#1d2330" stroke-width="{max(1.2, s * .05):.1f}" stroke-linejoin="round"/>')
+        if marks and k in marks:
+            mx = sum(x for x, _ in pts3) / 3; my = sum(y for _, y in pts3) / 3
+            labels.append(f'<circle cx="{mx:.1f}" cy="{my:.1f}" r="{s * .17:.1f}" fill="#0F2B46"/><text x="{mx:.1f}" y="{my + s * .07:.1f}" font-size="{s * .2:.1f}" font-weight="700" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif">{marks[k]}</text>')
+    svg = _fit_svg(polys, size, label)
+    return svg.replace("</svg>", "".join(labels) + "</svg>")

@@ -1,4 +1,4 @@
-"""Rubik's cube hobby section: a landing page, five tutorials and a request form.
+"""Puzzle Corner (Rubik's cube hobby section): a landing page, seven tutorials and a request form.
 
 Every algorithm printed on these pages is checked against the puzzle simulators in
 puzzles.py when the site is built (see verify()), and the diagrams are drawn from the
@@ -9,7 +9,7 @@ The request form is a Netlify form (data-netlify="true"); submissions appear und
 Forms in the Netlify dashboard for the okolielab project.
 """
 import html, math
-from puzzles import Cube, Pyraminx, cube_svg, pyra_svg, invert, _fit_svg
+from puzzles import Cube, Pyraminx, cube_svg, pyra_svg, invert, _fit_svg, FACES as FACES_CUBE
 
 E = html.escape
 
@@ -211,6 +211,144 @@ def svg_mirror(size=170, scrambled=False):
             '<linearGradient id="mR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b8c0ca"/><stop offset="1" stop-color="#7d8794"/></linearGradient></defs>')
     return _fit_svg(polys, size, "Mirror cube", defs)
 
+# ---------------- Megaminx and Helicopter cube ----------------
+from puzzles import make_megaminx, make_helicopter, mega_svg, heli_svg
+
+MEGA = {
+    "s2": "DR F DR' F'",            # white corner from the spot above its slot (F, DL, DR) into (D, DL, DR)
+    "s3_right": "F DR F' DR' F' DL' F DL",
+    "s3_left": "F' DL' F DL F DR F' DR'",
+    "s4_corner": "L F L' F'",       # corner from (F, L, DL) into (F, DL, DR)
+    "s4_dl_a": "F L' F' U F L F' U'",      # edge at top-front, F colour on top
+    "s4_dl_b": "F2 U' F2' U' F2 U F2' U",  # edge at top-front, F colour on the front
+    "s4_dr_a": "F' R F U' F' R' F U",
+    "s4_dr_b": "F2' U F2 U F2' U' F2 U'",
+    "lift": "F U F'",
+    "s5_corner": "R U R' U'",
+    "s5_right": "U R U' R' U' F' U F",
+    "s5_left": "U' L' U L U F U' F'",
+    "eo": "F R U R' U' F'",
+    "ep": "R U R' U R U2' R'",
+    "cp": "U R U' BL' U R' U' BL",
+    "co": "R' DR' R DR",
+}
+HELI = {
+    "twist_a": "UR UL UB UL UR UF",   # front-right and front-left corners: top stickers move down to the front
+    "twist_b": "UF UR UL UB UL UR",   # the reverse: top stickers move to the sides
+    "cycle": "FR UF FR UR FR UF FR UR",
+}
+_LOW = {"DR", "DBR", "DB", "DBL", "DL"}; _UPP = {"F", "R", "BR", "BL", "L"}
+
+def _mega():
+    if not hasattr(_mega, "g"): _mega.g = make_megaminx()
+    return _mega.g.copy()
+
+def _mstage(fs):
+    fs = set(fs)
+    if "D" in fs: return 1 if len(fs) <= 2 else 2
+    if "U" in fs: return 9
+    if len(fs) == 1: return 0
+    l = len(fs & _LOW)
+    if len(fs) == 2: return 3 if l == 2 else (4 if l == 1 else 5)
+    return 4 if l == 2 else 5
+
+def _mfoot(alg):
+    g = _mega(); g.state = list(range(len(g.pts))); g.apply(alg)
+    return {g.piece_faces[i] for i in range(len(g.pts)) if g.state[i] != i}
+
+def _minv(alg):
+    """Inverse of a Megaminx algorithm (on a Megaminx, X2 and X2' are different turns)."""
+    return " ".join(m[:-1] if m.endswith("'") else m + "'" for m in reversed(alg.split()))
+
+def _mloc(alg, target):
+    """Where the piece with faces `target` sits after applying the inverse of alg to a solved puzzle: {colour: face it shows on}."""
+    g = _mega(); g.state = list(range(len(g.pts))); g.apply(_minv(alg))
+    t = [i for i in range(len(g.pts)) if g.piece_faces[i] == target]
+    return {g.home[g.state[p]]: g.home[p] for p in range(len(g.pts)) if g.state[p] in t}
+
+def verify_mega_heli():
+    g = _mega(); f = frozenset
+    st = {p: _mstage(p) for p in set(g.piece_faces)}
+    def only(alg, allowed, upto):
+        bad = [p for p in _mfoot(alg) if st[p] <= upto and p not in allowed]
+        assert not bad, (alg, bad)
+    only(MEGA["s2"], {f({"D", "DL", "DR"})}, 2)
+    assert _mloc(MEGA["s2"], f({"D", "DL", "DR"})) == {"DR": "F", "D": "DR", "DL": "DL"}
+    only(MEGA["s3_right"], {f({"DL", "DR"})}, 3); only(MEGA["s3_left"], {f({"DL", "DR"})}, 3)
+    assert _mloc(MEGA["s3_right"], f({"DL", "DR"})) == {"DR": "F", "DL": "DL"}
+    assert _mloc(MEGA["s3_left"], f({"DL", "DR"})) == {"DL": "F", "DR": "DR"}
+    slot = {f({"F", "DL", "DR"}), f({"F", "DL"}), f({"F", "DR"})}
+    only(MEGA["s4_corner"], slot, 4)
+    assert set(_mloc(MEGA["s4_corner"], f({"F", "DL", "DR"})).values()) == {"F", "L", "DL"}
+    for k, tgt, want in (("s4_dl_a", {"F", "DL"}, {"DL": "F", "F": "U"}), ("s4_dl_b", {"F", "DL"}, {"F": "F", "DL": "U"}),
+                         ("s4_dr_a", {"F", "DR"}, {"DR": "F", "F": "U"}), ("s4_dr_b", {"F", "DR"}, {"F": "F", "DR": "U"})):
+        only(MEGA[k], {f(tgt)}, 4); assert _mloc(MEGA[k], f(tgt)) == want, k
+    only(MEGA["lift"], set(), 4)
+    only(MEGA["s5_corner"], {f({"F", "R", "DR"}), f({"F", "R"})}, 5)
+    assert set(_mloc(MEGA["s5_corner"], f({"F", "R", "DR"})).values()) == {"U", "F", "R"}
+    only(MEGA["s5_right"], {f({"F", "R"})}, 5); only(MEGA["s5_left"], {f({"F", "L"})}, 5)
+    assert _mloc(MEGA["s5_right"], f({"F", "R"})) == {"F": "F", "R": "U"}
+    for k in ("eo", "ep", "cp"): only(MEGA[k], set(), 5)
+    c = _mega()
+    for _ in range(6): c.apply(MEGA["co"])
+    assert c.solved()
+    # Helicopter: twist algorithms keep every corner in place; the cycle moves exactly three centres
+    h = make_helicopter(); n = len(h.pts)
+    corner = [i for i, p in enumerate(h.pts) if abs(sum(abs(x) for x in p) - 1 - 4 / 3) < 1e-6]
+    for k in ("twist_a", "twist_b"):
+        x = h.copy(); x.state = list(range(n)); x.apply(HELI[k])
+        key = lambda i: tuple(1 if v > 0 else -1 for v in h.pts[i])
+        assert all(key(x.state[i]) == key(i) for i in corner)
+        assert {key(i) for i in corner if x.state[i] != i} == {(1, 1, 1), (-1, 1, 1)}
+    x = h.copy(); x.state = list(range(n)); x.apply(HELI["cycle"])
+    moved = [i for i in range(n) if x.state[i] != i]
+    assert len(moved) == 3 and not set(moved) & set(corner)
+    return True
+
+def _mmask(upto, extra=None):
+    g = _mega()
+    return lambda k: _mstage(g.piece_faces[k]) <= upto or (extra is not None and extra(g, k))
+
+def svg_mega(stage, size=190):
+    g = _mega()
+    if stage == "scrambled":
+        return mega_svg(g.apply("R U F' L BR U2 R' DR F BL' U L2 DBR R F'"), size=size, label="A scrambled Megaminx")
+    if stage in ("s1", "s2", "s3"):
+        up = {"s1": 1, "s2": 2, "s3": 3}[stage]
+        return mega_svg(g, view="bottom", mask=_mmask(up), size=size, label=stage)
+    if stage in ("s4", "s5"):
+        return mega_svg(g, mask=_mmask(int(stage[1])), size=size, label=stage)
+    if stage == "star":
+        return mega_svg(g, mask=_mmask(5, lambda q, k: len(q.piece_faces[k]) == 2 and q.home[k] == "U"), size=size, label="Top star")
+    if stage == "ep":
+        return mega_svg(g, mask=_mmask(5, lambda q, k: len(q.piece_faces[k]) == 2), size=size, label="Top edges solved")
+    if stage == "cp":
+        x = MEGA["co"] + " "; twist = (x * 2) + "U " + (x * 4) + "U'"
+        return mega_svg(g.apply(twist), size=size, label="Corners in place, two twisted")
+    return mega_svg(g, size=size, label="Solved Megaminx")
+
+def _heli_idx(face, a, b, centre=True):
+    """Sticker index on face with signs a, b for the two other axes (in x, y, z order)."""
+    h = make_helicopter(); nv = FACES_CUBE[face]; ax = [i for i in range(3) if nv[i]][0]; o = [i for i in range(3) if i != ax]
+    t = 1 / 3 if centre else 2 / 3
+    for k, p in enumerate(h.pts):
+        if abs(p[ax] - nv[ax]) < 1e-9 and abs(p[o[0]] - a * t) < 1e-9 and abs(p[o[1]] - b * t) < 1e-9: return k
+
+def svg_heli(stage, size=170):
+    h = make_helicopter()
+    corner = [i for i, p in enumerate(h.pts) if abs(sum(abs(x) for x in p) - 1 - 4 / 3) < 1e-6]
+    def grey_centres(x):
+        for i in range(len(x.pts)):
+            if i not in corner: x.state[i] = "X"
+        return x
+    if stage == "scrambled": return heli_svg(h.apply("UF FR UL DB UR FL DF UB BR DL UF FR"), size=size, label="A scrambled Helicopter cube")
+    if stage == "corners": return heli_svg(grey_centres(h), size=size, label="Corners solved")
+    if stage == "twist": return heli_svg(grey_centres(h.apply(HELI["twist_a"])), size=size, label="The two front corners twisted")
+    if stage == "cycle":
+        a = _heli_idx("F", -1, 1); b = _heli_idx("U", 1, 1); c = _heli_idx("R", 1, -1)
+        return heli_svg(h, size=size, label="The three centres the algorithm cycles", marks={a: "1", b: "2", c: "3"})
+    return heli_svg(h, size=size, label="Solved Helicopter cube")
+
 # ---------------- page pieces ----------------
 def alg(s):
     return f'<code class="alg">{E(s)}</code>'
@@ -225,11 +363,13 @@ TUTORIALS = [
     ("rubiks-cube-pyraminx.html", "Triangle (Pyraminx)", "The pyramid-shaped puzzle. Quick to learn with four short steps.", lambda: svg_pyra("scrambled", 150), "Beginner"),
     ("rubiks-cube-mirror.html", "Mirror cube", "A 3×3 where every piece has a different size and all faces look the same.", lambda: svg_mirror(150), "Intermediate"),
     ("rubiks-cube-4x4.html", "4×4 cube", "The Rubik's Revenge. Reduce it to a 3×3, then handle parity.", lambda: svg_4x4("scrambled", 150), "Intermediate"),
+    ("rubiks-cube-megaminx.html", "Megaminx", "A 12-sided dodecahedron. Solved like a 3×3, layer by layer, with more layers.", lambda: svg_mega("scrambled", 160), "Intermediate"),
+    ("rubiks-cube-helicopter.html", "Helicopter cube", "Turns around its edges and can jumble into non-cube shapes. Corners first, then centres.", lambda: svg_heli("scrambled", 150), "Advanced"),
 ]
 
 def subnav(current):
     items = [("rubiks-cube.html", "Overview")] + [(h, t) for h, t, *_ in TUTORIALS] + [("rubiks-cube-request.html", "Request a tutorial or cube")]
-    return '<nav class="chips cube-subnav" aria-label="Rubik\'s cube pages">' + "".join(
+    return '<nav class="chips cube-subnav" aria-label="Puzzle Corner pages">' + "".join(
         f'<a class="chip{" on" if h == current else ""}" href="{h}"{" aria-current=\"page\"" if h == current else ""}>{t}</a>' for h, t in items) + "</nav>"
 
 def cta():
@@ -249,15 +389,15 @@ def notation_cube(big=False):
             f'<table class="cube-table"><tbody>{trs}</tbody></table></div>')
 
 def tutorial_page(fname, h1, lede, body):
-    return (f'<div class="page-hero cube-hero"><div class="wrap"><span class="tag">Rubik\'s cube tutorials</span><h1>{h1}</h1><p>{lede}</p>{subnav(fname)}</div></div>' + body + cta())
+    return (f'<div class="page-hero cube-hero"><div class="wrap"><span class="tag">Puzzle Corner</span><h1>{h1}</h1><p>{lede}</p>{subnav(fname)}</div></div>' + body + cta())
 
 # ---------------- pages ----------------
 def page_landing():
     cards = "".join(
         f'<a class="card cube-card" href="{h}"><div class="cube-card-fig">{fig()}</div><div class="b"><span class="tag">{lvl}</span><h3>{t}</h3><p>{d}</p><span class="more">Start the tutorial →</span></div></a>'
         for h, t, d, fig, lvl in TUTORIALS)
-    return f"""<div class="page-hero cube-hero"><div class="wrap cube-hero-grid"><div><span class="tag">Beyond the lab</span><h1>Solving the Rubik's cube</h1>
-<p>Solving Rubik's cubes and other twisty puzzles is one of Dr. Okolie's hobbies. These free tutorials take you from a scrambled puzzle to a solved one, step by step.</p>
+    return f"""<div class="page-hero cube-hero"><div class="wrap cube-hero-grid"><div><span class="tag">Beyond the lab</span><h1>Dr. Okolie's puzzle corner</h1>
+<p>Solving Rubik's cubes and other twisty puzzles is one of Dr. Okolie's hobbies. These free tutorials take you from a scrambled puzzle to a solved one, step by step: four cubes, a pyramid, a 12-sided Megaminx and the shape-shifting Helicopter cube.</p>
 <div class="btns" style="margin-top:24px"><a class="btn pri" href="rubiks-cube-3x3.html">Learn the 3×3</a><a class="btn" href="rubiks-cube-request.html">Request a tutorial or cube</a></div></div>
 <div class="cube-hero-art">{svg_3x3("scrambled", 230)}</div></div></div>
 <section><div class="wrap cols" style="align-items:start"><div><span class="tag">A hobby that teaches</span><h2>Why a cube?</h2>
@@ -404,8 +544,102 @@ def page_4x4():
     body = f'<section><div class="wrap">{notation_cube(big=True)}</div></section><section class="tint"><div class="wrap cube-steps">{"".join(s)}</div></section>'
     return tutorial_page("rubiks-cube-4x4.html", "How to solve a 4×4 cube", "The reduction method: build the centres, pair the edges, and you're left with a big 3×3. Learn the 3×3 first.", body)
 
+
+def notation_mega():
+    rows = [("U", "Top face, one-fifth turn (72°) clockwise"), ("F", "Front face: the upper face pointing at you"), ("R, L", "The upper faces to the right and left of F"),
+            ("BR, BL", "The two upper faces at the back"), ("DR, DL", "The lower faces at the front-right and front-left (below where F meets R or L)"),
+            ("D", "The bottom face (white)"), ("R'", "A prime (') means counter-clockwise"), ("U2, U2'", "Two-fifths of a turn (144°) clockwise or counter-clockwise")]
+    trs = "".join(f"<tr><td>{alg(a)}</td><td>{d}</td></tr>" for a, d in rows)
+    return ('<div class="cube-notation"><div><span class="tag">Notation</span><h2>Reading the moves</h2><p class="muted">Hold the Megaminx with the <b>white face at the bottom</b> for the whole tutorial. '
+            'One of the five upper faces points at you: that is F. "Clockwise" means clockwise as if you were looking straight at that face. To work on a different spot, turn the whole puzzle, keeping white at the bottom.</p></div>'
+            f'<table class="cube-table"><tbody>{trs}</tbody></table></div>')
+
+def page_megaminx():
+    m = MEGA
+    s4 = "".join(f"<tr><td>{a}</td><td>{b}</td><td>{alg(m[k])}</td></tr>" for a, b, k in (
+        ("Front and lower-left (F + DL colours)", "The F colour is on top", "s4_dl_a"), ("Front and lower-left (F + DL colours)", "The F colour faces the front", "s4_dl_b"),
+        ("Front and lower-right (F + DR colours)", "The F colour is on top", "s4_dr_a"), ("Front and lower-right (F + DR colours)", "The F colour faces the front", "s4_dr_b")))
+    st = [
+        step(1, "Make the white star", svg_mega("s1"),
+             "<p>Bring the five white edges down next to the white centre, each with its other colour matching the centre of the face beside it. This is intuitive: a lower face turn (" + alg("DR") + ", " + alg("DL") + " and so on) swings an edge down into the white face, and top-layer turns let you line it up first. Tip: turn the puzzle upside down while you do this, so you can see the white face.</p>",
+             "Goal: a white star with matching side colours (seen from below)"),
+        step(2, "Solve the white corners", svg_mega("s2"),
+             "<p>Turn the puzzle (white still at the bottom) so the corner slot you want to fill is at the front, between " + alg("DL") + ", " + alg("DR") + " and white. Using only " + alg("U") + " and " + alg("F") + " turns (they never touch the white face), bring the corner to the spot <b>directly above its slot</b>, where F, DL and DR meet. Then repeat:</p>"
+             f"<p class='alg-line'>{alg(m['s2'])}</p><p>until the corner drops in with white facing down (one to five times). If a white corner is in the wrong slot, hold that slot at the front and do the algorithm once to lift it out.</p>",
+             "Goal: the whole white face, seen from below"),
+        step(3, "Second layer edges", svg_mega("s3"),
+             "<p>These five edges sit between neighbouring lower faces. Hold the slot you want at the front, between " + alg("DL") + " and " + alg("DR") + ". Bring the edge into the front face F (with " + alg("U") + " and " + alg("F") + " turns), then turn " + alg("F") + " until its side colour matches the centre beside it.</p>"
+             f"<p>If it's on the lower-left of F, matching DL, it goes to the right:</p><p class='alg-line'>{alg(m['s3_right'])}</p><p>If it's on the lower-right of F, matching DR, it goes to the left:</p><p class='alg-line'>{alg(m['s3_left'])}</p>"
+             "<p class=\"muted\">These are the 3×3 middle-layer algorithms, with F playing the part of the top face. If an edge is in the wrong slot, use either one to push another edge in, which brings the wrong one back out.</p>",
+             "Goal: white face and second-layer edges"),
+        step(4, "Finish the lower faces", svg_mega("s4"),
+             "<p>Each of the five lower faces still needs one corner and two edges. Work on one front face at a time: its slot is the corner where " + alg("F") + ", " + alg("DL") + " and " + alg("DR") + " meet, plus the edges F–DL and F–DR.</p>"
+             "<p><b>Corner first.</b> Turn " + alg("U") + " until the corner is at the top-front-left, then do " + alg("F'") + " to bring it to the front-left middle spot (where F, L and DL meet). Now repeat:</p>"
+             f"<p class='alg-line'>{alg(m['s4_corner'])}</p><p>until the corner is solved (one to five times). Then the two edges: turn " + alg("U") + " to bring the edge to the top-front, and find its case:</p>"
+             f'<table class="cube-table cube-table-3"><thead><tr><th>The edge belongs at the…</th><th>When</th><th>Do</th></tr></thead><tbody>{s4}</tbody></table>'
+             f"<p class=\"muted\">These moves never disturb the other lower faces. If a piece is stuck in the middle ring of the puzzle, turn the puzzle so it's at the front-left middle spot and do {alg(m['lift'])} to lift it to the top without breaking anything you've solved. If a piece is in the wrong slot, hold that slot at the front and do the matching algorithm once to swap it out.</p>",
+             "Goal: all lower faces finished"),
+        step(5, "Fill the upper ring", svg_mega("s5"),
+             "<p>Now only the top face and the ring of slots just below it remain, and the top face is free to move, just like the last layers of a 3×3. For each slot (the corner where F, R and DR meet, and the edge between F and R):</p>"
+             f"<p><b>Corner:</b> turn " + alg("U") + " to bring it to the top-front-right, then repeat " + alg(m["s5_corner"]) + " until it drops in correctly.</p>"
+             f"<p><b>Edge:</b> turn " + alg("U") + f" until the edge's front colour matches F. If its top colour matches R, do {alg(m['s5_right'])}; if it matches L, do {alg(m['s5_left'])}.</p>",
+             "Goal: everything except the top face"),
+        step(6, "Make the top star", svg_mega("star"),
+             f"<p>Look at the five top edges. Some show the top colour on top, some don't (there is always an even number that don't). The algorithm is {alg(m['eo'])}.</p>"
+             "<ul><li><b>Two wrong, not next to each other:</b> one at the front, the other at the back-right. Do the algorithm once.</li>"
+             "<li><b>Two wrong, next to each other:</b> hold them at the front and front-right. Do it once to get the case above.</li>"
+             "<li><b>Four wrong:</b> hold the correct one at the front-right. Do it once to get two wrong next to each other.</li></ul>",
+             "Goal: a star of the top colour"),
+        step(7, "Match the top edges", svg_mega("ep"),
+             f"<p>Turn {alg('U')} until as many top edges as possible match their side centres. The algorithm is {alg(m['ep'])}; it cycles the three edges at the right and back, leaving the front and left edges in place.</p>"
+             "<ul><li><b>Two edges next to each other match:</b> hold them at the front and left. Do the algorithm, then once more if needed.</li>"
+             "<li><b>Two edges match but not next to each other:</b> hold one at the front, the other at the back-right. Do the algorithm.</li>"
+             "<li><b>Only one matches:</b> hold it at the left. Do the algorithm.</li></ul><p>After each one, turn " + alg("U") + " again to line up as many as possible, and repeat.</p>",
+             "Goal: all five top edges match"),
+        step(8, "Put the top corners in place", svg_mega("cp"),
+             f"<p>Don't turn the top any more: the edges are solved. A corner is in place when it sits between the three centres that match its colours, even if twisted. The algorithm is {alg(m['cp'])}.</p>"
+             "<ul><li><b>Two neighbouring corners in place:</b> hold them at the top front-left and front-right. Do the algorithm, then once more if needed.</li>"
+             "<li><b>Two corners in place, not neighbours:</b> hold one at the front-right, the other at the back (between BR and BL). Do the algorithm.</li>"
+             "<li><b>One corner in place:</b> hold it at the front-left. Do the algorithm.</li><li><b>None:</b> do it from any side.</li></ul><p>Look again after each one and repeat until all five are in place.</p>",
+             "Goal: corners in place (two still twisted here)"),
+        step(9, "Twist the top corners", svg_mega("solved"),
+             "<p>Exactly like the last step of the 3×3. Hold an unsolved corner at the <b>top-front-right</b> and repeat " + alg(m["co"]) + " until the top colour faces up (two or four times). The rest of the puzzle will look scrambled. <b>Keep going.</b> Turn only " + alg("U") + " to bring the next unsolved corner to the front-right and repeat. When all five are done, everything comes back; turn the top to line it up.</p>",
+             "Solved!"),
+    ]
+    body = f'<section><div class="wrap">{notation_mega()}</div></section><section class="tint"><div class="wrap cube-steps">{"".join(st)}</div></section>'
+    return tutorial_page("rubiks-cube-megaminx.html", "How to solve the Megaminx", "The 12-sided Megaminx is solved just like a 3×3, one layer at a time, only with more layers. If you can solve a 3×3, every idea here will feel familiar.", body)
+
+def page_helicopter():
+    h = HELI
+    rows = [("UF", "Half turn (180°) around the edge between the top (U) and front (F) faces"), ("UR, UL, UB", "The other three top edges"),
+            ("FR, FL", "The two front vertical edges"), ("DF, DR…", "Edges on the bottom work the same way")]
+    trs = "".join(f"<tr><td>{alg(a)}</td><td>{d}</td></tr>" for a, d in rows)
+    notation = ('<div class="cube-notation"><div><span class="tag">Notation</span><h2>Reading the moves</h2><p class="muted">The Helicopter cube turns around its <b>edges</b>, not its faces. '
+                'Each move is a half turn around one edge, named after the two faces that meet there. Because every move is a half turn, there is no clockwise or counter-clockwise, and doing the same move twice undoes it.</p>'
+                '<p class="muted"><b>Only make full half turns.</b> If you stop part-way, the pieces can jump into a strange non-cube shape. That\'s called jumbling, and it\'s fun later but confusing now. If it happens, turn back.</p></div>'
+                f'<table class="cube-table"><tbody>{trs}</tbody></table></div>')
+    st = [
+        step(1, "Put the corners in place", svg_heli("corners"),
+             "<p>Solve the corners first and ignore the triangle-shaped centres for now. Every turn swaps the two corners at the ends of that edge (and twists them).</p>"
+             "<p>Pick one corner as your reference; every other corner then has one correct place in the colour scheme (white opposite yellow, green opposite blue, red opposite orange). Move the corners home one at a time: turning the edge between two corners swaps them. To swap two corners that don't share an edge, use three swaps through a corner between them: A↔B, then B↔C, then A↔B again. That swaps A and C and leaves B where it was. Don't worry about twisted corners yet.</p>",
+             "Goal: every corner in its place (centres greyed out)"),
+        step(2, "Twist the corners", svg_heli("twist"),
+             "<p>Hold the cube so a twisted corner is at the <b>top front-right</b>, with a neighbour at the top front-left. There are two algorithms, and each twists both front corners at once:</p>"
+             f"<p class='alg-line'>{alg(h['twist_a'])}</p><p>moves the top sticker of both front corners down onto the front face, and</p><p class='alg-line'>{alg(h['twist_b'])}</p>"
+             "<p>moves the top sticker of each front corner out to the side (right for the right corner, left for the left). Use one of them to fix the front-right corner. The front-left corner gets twisted too, so make it your next corner: turn the whole cube so it becomes the front-right corner and repeat with its next neighbour. Work your way around the top, then the bottom. When you reach the last corner, it will already be right.</p>",
+             "The two front corners after the first twist algorithm"),
+        step(3, "Solve the centres", svg_heli("cycle"),
+             f"<p>The centres are solved with one algorithm that swaps three centres in a loop without touching the corners:</p><p class='alg-line'>{alg(h['cycle'])}</p>"
+             "<p>It moves the centre at spot 1 (front face, upper-left) to spot 2 (top face, front-right), spot 2 to spot 3 (right face, upper-back), and spot 3 back to spot 1. Doing the moves in reverse order sends them the other way.</p>"
+             "<p>To use it on any centre: first do one or two <b>setup moves</b> that bring the centre you want into one of the three spots, without moving the other two spots. Do the algorithm, then undo your setup moves in reverse order. Because the corners are only moved by the setup moves, undoing them puts the corners back. Work one face at a time. Centres of the same colour are identical, so any matching centre will do.</p>",
+             "The three centres the algorithm cycles: 1 → 2 → 3 → 1"),
+        step(4, "Done", svg_heli("solved"), "<p>Solved! Once you're comfortable, try jumbling turns. They take the puzzle into shapes no cube can make.</p>", "Solved!"),
+    ]
+    body = f'<section><div class="wrap">{notation}</div></section><section class="tint"><div class="wrap cube-steps">{"".join(st)}</div></section>'
+    return tutorial_page("rubiks-cube-helicopter.html", "How to solve the Helicopter cube", "It looks like a cube, but it turns around its edges, and an uneven turn sends it into wild non-cube shapes. Corners first, then centres.", body)
+
 def page_request():
-    opts = "".join(f'<option value="{E(t)}">{t}</option>' for t in ["2×2 cube", "3×3 cube", "Triangle (Pyraminx)", "Mirror cube", "4×4 cube", "Not sure yet"])
+    opts = "".join(f'<option value="{E(t)}">{t}</option>' for t in ["2×2 cube", "3×3 cube", "Triangle (Pyraminx)", "Mirror cube", "4×4 cube", "Megaminx", "Helicopter cube", "Not sure yet"])
     radio = lambda name, vals, req=True: "".join(f'<label class="opt"><input type="radio" name="{name}" value="{E(v)}"{" required" if req and i == 0 else ""}><span>{v}</span></label>' for i, v in enumerate(vals))
     form = f"""<form class="cube-form" name="cube-request" method="POST" action="rubiks-cube-thanks.html" data-netlify="true" netlify-honeypot="company">
 <input type="hidden" name="form-name" value="cube-request"><p class="hp" hidden><label>Leave this empty <input name="company"></label></p>
@@ -419,27 +653,29 @@ def page_request():
 <p class="muted" style="font-size:14px;margin:10px 0 0">If you'd like a cube, we'll reply by email to arrange how to get it to you. Please don't include a home address here.</p></fieldset>
 <button class="btn pri" type="submit">Send request</button></form>"""
     side = """<div><span class="tag">Get in touch</span><h2>Personalised tutorials and practice cubes</h2>
-<p class="muted">Stuck on a step, or teaching a group and want help? Dr. Okolie offers personalised tutorials on the 2×2, 3×3, Pyraminx, mirror cube and 4×4. If you don't have a puzzle yet, ask for one to practise with.</p>
+<p class="muted">Stuck on a step, or teaching a group and want help? Dr. Okolie offers personalised tutorials on the 2×2, 3×3, Pyraminx, mirror cube, 4×4, Megaminx and Helicopter cube. If you don't have a puzzle yet, ask for one to practise with.</p>
 <ul class="list"><li><b>Students and beginners</b><br><span class="muted">One-on-one help to get your first solve.</span></li><li><b>Classes and clubs</b><br><span class="muted">Using the cube to explain systems thinking and problem solving.</span></li><li><b>Practice cubes</b><br><span class="muted">Ask, and we'll be in touch about sending one.</span></li></ul></div>"""
     body = f'<section><div class="wrap cols" style="align-items:start">{side}{form}</div></section>'
-    return (f'<div class="page-hero cube-hero"><div class="wrap"><span class="tag">Rubik\'s cube</span><h1>Request a tutorial or a cube</h1><p>Fill in the form and Dr. Okolie will get back to you by email.</p>{subnav("rubiks-cube-request.html")}</div></div>' + body)
+    return (f'<div class="page-hero cube-hero"><div class="wrap"><span class="tag">Puzzle Corner</span><h1>Request a tutorial or a cube</h1><p>Fill in the form and Dr. Okolie will get back to you by email.</p>{subnav("rubiks-cube-request.html")}</div></div>' + body)
 
 def page_thanks():
-    return ('<div class="page-hero cube-hero"><div class="wrap"><span class="tag">Rubik\'s cube</span><h1>Thank you!</h1><p>Your request has been sent. Dr. Okolie will reply by email.</p></div></div>'
+    return ('<div class="page-hero cube-hero"><div class="wrap"><span class="tag">Puzzle Corner</span><h1>Thank you!</h1><p>Your request has been sent. Dr. Okolie will reply by email.</p></div></div>'
             f'<section><div class="wrap cube-thanks">{svg_3x3("solved", 180)}<div><h2>While you wait</h2><p class="muted">Pick a tutorial and try the first step.</p><div class="btns"><a class="btn pri" href="rubiks-cube.html">All tutorials</a><a class="btn" href="index.html">Back to the lab website</a></div></div></div></section>')
 
 PAGES = [
-    ("rubiks-cube.html", "Rubik's Cube · SETD Research Group", "Dr. Jude Okolie's Rubik's cube hobby: free beginner tutorials for the 2x2, 3x3, Pyraminx, mirror cube and 4x4.", page_landing),
+    ("rubiks-cube.html", "Puzzle Corner · SETD Research Group", "Dr. Jude Okolie's puzzle corner: free beginner tutorials for the 2x2, 3x3, Pyraminx, mirror cube, 4x4, Megaminx and Helicopter cube.", page_landing),
     ("rubiks-cube-2x2.html", "How to Solve a 2x2 Cube · SETD Research Group", "Step-by-step beginner tutorial for the 2x2 pocket cube.", page_2x2),
     ("rubiks-cube-3x3.html", "How to Solve a 3x3 Rubik's Cube · SETD Research Group", "Layer-by-layer beginner tutorial for the 3x3 Rubik's cube.", page_3x3),
     ("rubiks-cube-pyraminx.html", "How to Solve the Pyraminx · SETD Research Group", "Beginner tutorial for the triangle-shaped Pyraminx puzzle.", page_pyraminx),
     ("rubiks-cube-mirror.html", "How to Solve the Mirror Cube · SETD Research Group", "How to solve the mirror cube using the 3x3 method.", page_mirror),
     ("rubiks-cube-4x4.html", "How to Solve a 4x4 Cube · SETD Research Group", "Beginner reduction method for the 4x4 cube, including parity fixes.", page_4x4),
-    ("rubiks-cube-request.html", "Request a Rubik's Cube Tutorial · SETD Research Group", "Request a personalised Rubik's cube tutorial or a practice cube from Dr. Jude Okolie.", page_request),
+    ("rubiks-cube-megaminx.html", "How to Solve the Megaminx · SETD Research Group", "Beginner layer-by-layer tutorial for the Megaminx (12-sided puzzle).", page_megaminx),
+    ("rubiks-cube-helicopter.html", "How to Solve the Helicopter Cube · SETD Research Group", "Beginner tutorial for the Helicopter cube: corners first, then centres.", page_helicopter),
+    ("rubiks-cube-request.html", "Request a Puzzle Tutorial · SETD Research Group", "Request a personalised Rubik's cube tutorial or a practice cube from Dr. Jude Okolie.", page_request),
     ("rubiks-cube-thanks.html", "Thank You · SETD Research Group", "Your Rubik's cube tutorial request was sent.", page_thanks),
 ]
 
 def build_cube_pages(page):
-    verify()
+    verify(); verify_mega_heli()
     for fname, title, desc, fn in PAGES:
         page(fname, title, desc, fn())
