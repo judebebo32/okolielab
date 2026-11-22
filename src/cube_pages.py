@@ -391,6 +391,12 @@ def notation_cube(big=False):
 def tutorial_page(fname, h1, lede, body):
     return (f'<div class="page-hero cube-hero"><div class="wrap"><span class="tag">Puzzle Corner</span><h1>{h1}</h1><p>{lede}</p>{subnav(fname)}</div></div>' + body + cta())
 
+def video_block(src, poster, title, caption):
+    """Short clip of Dr. Okolie solving the puzzle, with background music. Plays muted in a loop; tap to unmute."""
+    return (f'<section><div class="wrap cube-video"><div class="cv-text"><span class="tag">Watch</span><h2>{title}</h2><p>{caption}</p>'
+            '<p class="muted" style="font-size:14px">The clip plays silently; tap the speaker icon to hear the music. Background music: an original track made for this site.</p></div>'
+            f'<video src="img/{src}" poster="img/{poster}" controls autoplay muted loop playsinline preload="metadata"></video></div></section>')
+
 # ---------------- pages ----------------
 def page_landing():
     cards = "".join(
@@ -495,7 +501,8 @@ def page_pyraminx():
              f"<p class='alg-line'>{alg(A['pyr_flip'])}</p>", "Two flipped edges at the front, ready for the last algorithm"),
         step(5, "Done", svg_pyra("solved"), "<p>Solved. The Pyraminx has far fewer positions than a 3×3, so with a little practice you'll be solving it in under a minute.</p>", "Solved!"),
     ]
-    body = f'<section><div class="wrap">{notation}</div></section><section class="tint"><div class="wrap cube-steps">{"".join(s)}</div></section>'
+    body = (video_block("cube-pyraminx-solve.mp4", "cube-pyraminx-solve.jpg", "Dr. Okolie solves the Pyraminx", "A quick Pyraminx solve by Dr. Okolie in his office. Once the tips and centres are set, the last edges go fast.")
+            + f'<section><div class="wrap">{notation}</div></section><section class="tint"><div class="wrap cube-steps">{"".join(s)}</div></section>')
     return tutorial_page("rubiks-cube-pyraminx.html", "How to solve the triangle (Pyraminx)", "The pyramid puzzle looks harder than a cube but is easier: four steps and two algorithms for the finish.", body)
 
 def page_mirror():
@@ -516,7 +523,8 @@ def page_mirror():
              "<ul><li>Learn the 3×3 first. It's much easier to recognise a stage you have already seen in colour.</li><li>Work in good light and turn the cube to catch reflections; edges stand out better from an angle.</li>"
              "<li>Your last layer is the face opposite the one you started with. Remember which it is before you begin.</li></ul>", ""),
     ]
-    body = f'<section class="tint"><div class="wrap cube-steps">{"".join(s)}</div></section>'
+    body = (video_block("cube-mirror-solve.mp4", "cube-mirror-solve.jpg", "Dr. Okolie solves the mirror cube", "Watch Dr. Okolie solve a mirror cube. Every face is silver, so the pieces are told apart by their size and shape rather than colour.")
+            + f'<section class="tint"><div class="wrap cube-steps">{"".join(s)}</div></section>')
     return tutorial_page("rubiks-cube-mirror.html", "How to solve the mirror cube", "Same moves as a 3×3, different senses: you solve this one by shape, not colour.", body)
 
 def page_4x4():
