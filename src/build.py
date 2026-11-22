@@ -1,6 +1,7 @@
 """Builds the SETD website (static HTML) into /home/claude/site_c from the content below."""
 import html, re, pathlib
 from hiring_page import hiring_body
+from cube_pages import build_cube_pages
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT/"setd-website"
 CONTENT = ROOT/"src"/"content"
@@ -8,14 +9,15 @@ E = html.escape
 
 EMAIL = "jude.okolie@bucknell.edu"
 LINKS = [("Google Scholar","https://scholar.google.com/citations?user=G-_iMkoAAAAJ&hl=en&oi=ao"),("ORCID","https://orcid.org/0000-0001-7506-551X"),("LinkedIn","https://www.linkedin.com/in/judeaokolie/"),("ResearchGate","https://www.researchgate.net/profile/Jude-Okolie")]
-NAV = [("index.html","Home"),("research.html","Research"),("people.html","People"),("facilities.html","Facilities"),("publications.html","Publications"),("teaching.html","Teaching"),("outreach.html","Outreach"),("news.html","News"),("about.html","About &amp; Contact"),("student-hiring.html","Student Hiring")]
+NAV = [("index.html","Home"),("research.html","Research"),("people.html","People"),("facilities.html","Facilities"),("publications.html","Publications"),("teaching.html","Teaching"),("outreach.html","Outreach"),("rubiks-cube.html","Rubik's Cube"),("news.html","News"),("about.html","About &amp; Contact"),("student-hiring.html","Student Hiring")]
 
 def ext(t,u,cls=""):
     c=f' class="{cls}"' if cls else ""
     return f'<a href="{E(u)}" target="_blank" rel="noopener"{c}>{t}</a>'
 
 def page(fname, title, desc, body):
-    nav = "".join(f'<a href="{h}"{" class=\"nav-cta\"" if h=="student-hiring.html" else ""}{" aria-current=\"page\"" if h==fname else ""}>{n}</a>' for h,n in NAV)
+    cur = "rubiks-cube.html" if fname.startswith("rubiks-cube") else fname
+    nav = "".join(f'<a href="{h}"{" class=\"nav-cta\"" if h=="student-hiring.html" else ""}{" aria-current=\"page\"" if h==cur else ""}>{n}</a>' for h,n in NAV)
     foot_pages = "".join(f'<a href="{h}">{n}</a>' for h,n in NAV)
     foot_links = "".join(ext(t,u) for t,u in LINKS)
     doc = f"""<!DOCTYPE html>
@@ -373,6 +375,8 @@ def build():
 
     # CONTACT
     (OUT/"contact.html").write_text('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Contact · SETD Research Group</title><link rel="canonical" href="about.html#contact"><meta http-equiv="refresh" content="0; url=about.html#contact"></head><body><p><a href="about.html#contact">Contact details</a></p></body></html>',encoding="utf-8")
+
+    build_cube_pages(page)
 
     page("student-hiring.html","Student Hiring · Graduate Research Assistants (MSc/PhD) · SETD Research Group","Fully funded MSc and PhD research assistant positions with the SETD group in collaboration with McGill University: critical mineral recovery from spent lithium batteries and rare earth recovery.",hiring_body(EMAIL))
 

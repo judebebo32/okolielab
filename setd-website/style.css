@@ -196,3 +196,56 @@ a.chip:hover{border-color:var(--orange)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 [id]{scroll-margin-top:96px}
+
+/* Rubik's cube section */
+.cube-hero .cube-subnav{margin-top:26px}
+.cube-subnav .chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cube-hero-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:40px;align-items:center}
+.cube-hero-art{display:flex;justify-content:center}
+.cube-svg{display:block;max-width:100%;height:auto}
+.cube-card-fig{display:flex;justify-content:center;align-items:center;background:var(--tint);padding:26px 0;border-bottom:1px solid var(--line)}
+.cube-parallels{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cube-parallels .step{background:var(--tint)}
+.cube-notation{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:40px;align-items:start}
+.cube-table{width:100%;border-collapse:collapse;font-size:15.5px}
+.cube-table td,.cube-table th{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.cube-table th{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.cube-table td:first-child{white-space:nowrap}
+.cube-table-3{background:#fff;border-radius:10px;margin:8px 0 12px}
+.alg{font:600 15px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#fff;color:var(--navy);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.alg-line .alg{display:inline-block;font-size:17px;padding:8px 14px;border-left:4px solid var(--orange);white-space:normal}
+.cube-steps{display:grid;gap:22px}
+.cube-step{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:32px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px 30px}
+.cube-step h3{margin:6px 0 10px;font-size:24px}
+.cube-step p,.cube-step li{color:var(--ink);font-size:16px}
+.cube-step ul{padding-left:20px}
+.cube-num{font:700 12.5px/1.2 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--orange-ink)}
+.cube-fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.cube-fig figcaption{font-size:13.5px;color:var(--muted);line-height:1.4}
+.cube-step a{color:var(--orange-ink);font-weight:600}
+.cube-thanks{display:flex;gap:40px;align-items:center;flex-wrap:wrap}
+.cube-form{background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px;box-shadow:0 14px 34px rgba(15,43,70,.08)}
+.cube-form fieldset{border:0;padding:0;margin:0 0 24px}
+.cube-form legend{font-weight:800;color:var(--navy);font-size:18px;margin-bottom:12px;padding:0}
+.cube-form legend small{display:block;font-weight:500;color:var(--muted);font-size:14px;margin-top:2px}
+.cube-form .f-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cube-form .f{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.cube-form .f label{font-weight:700;color:var(--navy);font-size:15px}
+.cube-form input[type=text],.cube-form input[type=email],.cube-form textarea,.cube-form select{font:inherit;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);width:100%}
+.cube-form input:focus,.cube-form textarea:focus,.cube-form select:focus{outline:none;border-color:var(--orange)}
+.cube-form textarea{min-height:120px;resize:vertical}
+.cube-form .opts{display:flex;flex-wrap:wrap;gap:10px}
+.cube-form .opt{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;font-size:15px;flex:1 1 180px}
+.cube-form .opt:has(input:checked){border-color:var(--orange);background:#FFF6EE}
+.cube-form .opt input{margin-top:4px;accent-color:var(--orange)}
+.cube-form .btn{cursor:pointer;font:inherit;font-weight:700}
+.cube-form .hp{position:absolute;left:-9999px}
+@media (max-width:900px){
+  .cube-hero-grid,.cube-notation{grid-template-columns:1fr}
+  .cube-hero-art{justify-content:flex-start}
+  .cube-step{grid-template-columns:1fr;padding:22px 20px}
+  .cube-fig{order:-1}
+  .cube-form{padding:22px}
+  .cube-form .f-row{grid-template-columns:1fr}
+}
+@media (max-width:600px){.cube-parallels{grid-template-columns:1fr}.cube-table td:first-child{white-space:normal}}
