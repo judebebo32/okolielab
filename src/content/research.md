@@ -21,7 +21,7 @@ Over the years, I have acquired skills in catalysts development, Process Systems
 - Catalysts development for catalytic hydrogenolysis of lignin-based compounds to sustainable chemicals (Collaboration with Prof. Kausn Gunasooriya).
 
 ## Patent (verbatim)
-Adekune A.A., Peter P. Ikubanmi, Emmanuel, A, Olayinka O.A, Olarenwaju, O, **Okolie, J.A**, David A, Jamie K. Odusote. Locally designed and fabricated mini ablative pyrolyzer for dual energy products.
+Adeleke, A. A., Ikubanni, P. P., Adeyemi, E., Agboola, O. O., Adesina, O. S., Nzerem, P., Gimba, A., Odusote, J. K., & Okolie, J. A. (2023). Mini Ablative Pyrolyzer for Dual Energy Products. Nigeria Patent NG/PT/2022/498 (granted 2023).
 
 ## VComic works in progress (verbatim)
 Welcome to VComic. Here we regularly present links to virtual reality game and comic books developed by Dr. Okolie and Team members.

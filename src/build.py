@@ -72,7 +72,7 @@ CLUSTERS = [
 ]
 COMPLETED = ["Hydrothermal gasification of waste materials for hydrogen production.","Anaerobic digestion of food waste to biogas.","Modelling and optimization of integrated biomass valorization processes.","Process optimization and preliminary techno-economic analysis of glycerol to propylene glycol.","Biopesticide production from food waste (collaboration with Prof. Burcu Gunes, DCU).","Activated carbon functionalization for carbon capture.","Production of activated carbon for energy storage applications.","Catalyst development for the conversion of glycerol to propylene glycol (collaboration with Prof. Patrick Okoye).","Development of a mobile game app for teaching introductory process engineering."]
 CURRENT = ["AI-guided design of novel deep eutectic solvents for critical metal recovery from spent lithium-ion batteries (Bucknell IDEA Grant).","GIS screening of suitable sites for spent alkaline battery upcycling to functional energy storage materials (Bucknell L&amp;IT Summer Research Grant).","Pathways for the recovery of lithium, nickel and cobalt from spent lithium batteries (Bucknell College of Engineering).","Metal–support interactions and coke deposition mechanisms in Ni–Co–Fe catalysts for dry methane reforming (ACS Petroleum Research Fund, Jan 2027 – Dec 2028).","Development of an integrated chemical looping gasification system (collaboration with Prof. Fatih Gulec, University of Nottingham).","Conversion of glycerol to value-added chemicals.","Underground hydrogen storage (collaboration with Dr. Emmanuel Epelle, UWS).","Design of a mobile pyrolysis unit.","Modelling and process optimization of hydrogen production systems.","Catalyst development for catalytic hydrogenolysis of lignin-based compounds to sustainable chemicals (collaboration with Prof. Kausn Gunasooriya).","Technology evaluation of waste biomass gasification to sustainable aviation fuel (industry grant, The Catalyst Group Resources)."]
-PATENT = "Adekunle A.A., Peter P. Ikubanni, Emmanuel, A., Olayinka O.A., Olarenwaju, O., <mark>Okolie, J.A.</mark>, David A., Jamie K. Odusote. Locally designed and fabricated mini ablative pyrolyzer for dual energy products."
+PATENT = "Adeleke, A.A., Ikubanni, P.P., Adeyemi, E., Agboola, O.O., Adesina, O.S., Nzerem, P., Gimba, A., Odusote, J.K. and <mark>Okolie, J.A.</mark> (2023). Mini Ablative Pyrolyzer for Dual Energy Products. Nigeria Patent NG/PT/2022/498 (granted 2023)."
 METHODS = ["Experiments","Catalyst development","Process design &amp; simulation","Control &amp; optimization","Energy system modelling","Techno-economic analysis","Life cycle assessment","Machine learning &amp; AI"]
 
 def parse_people(fn):
@@ -258,7 +258,7 @@ def build():
 <section><div class="wrap cols"><div><span class="tag">In progress</span><h2>Current projects</h2><ul class="list">{"".join(f"<li>{x}</li>" for x in CURRENT)}</ul></div>
 <div><span class="tag">Done</span><h2>Completed projects</h2><ul class="list">{"".join(f"<li>{x}</li>" for x in COMPLETED)}</ul></div></div></section>
 <section><div class="wrap"><span class="tag">Toolkit</span><h2>Methods</h2><div class="chips" style="margin-top:18px">{"".join(f'<span class="chip">{m}</span>' for m in METHODS)}</div></div></section>
-<section><div class="wrap"><span class="tag">Intellectual property</span><h2>Patent</h2><div class="callout"><p style="margin:0">{PATENT}</p></div></div></section>"""
+<section><div class="wrap"><span class="tag">Intellectual property</span><h2>Patent (granted)</h2><div class="callout"><p style="margin:0">{PATENT}</p></div></div></section>"""
     page("research.html","Research · SETD Research Group","Research clusters, current and completed projects, and patent of the SETD group.",research)
 
     # PEOPLE
@@ -294,7 +294,7 @@ def build():
 <section><div class="wrap"><div class="chips" style="margin-bottom:24px">{"".join(ext(t,u,"chip") for t,u in LINKS)}</div><div class="chips" style="margin-bottom:40px"><a class="chip" href="#chapters">Book chapters</a><a class="chip" href="#books">Books</a><a class="chip" href="#patent">Patent</a></div>{pubs}</div></section>
 <section id="chapters" class="tint"><div class="wrap"><span class="tag">Book chapters</span><h2>Book chapters</h2><ol class="pubs">{chap_html}</ol></div></section>
 <section id="books"><div class="wrap"><span class="tag">Books</span><h2>Books</h2><div class="books" style="margin-top:28px">{books}</div></div></section>
-<section id="patent" class="tint"><div class="wrap"><span class="tag">Intellectual property</span><h2>Patent</h2><div class="callout" style="background:#fff"><p style="margin:0">{PATENT}</p></div></div></section>"""
+<section id="patent" class="tint"><div class="wrap"><span class="tag">Intellectual property</span><h2>Patent (granted)</h2><div class="callout" style="background:#fff"><p style="margin:0">{PATENT}</p></div></div></section>"""
     page("publications.html","Publications · SETD Research Group","Publications and books by Dr. Jude A. Okolie and the SETD group.",pubpage)
 
     # TEACHING
