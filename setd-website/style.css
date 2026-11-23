@@ -257,3 +257,4 @@ a.chip:hover{border-color:var(--orange)}
 .cube-video{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:40px;align-items:center}
 .cube-video video{width:100%;max-height:640px;aspect-ratio:9/16;object-fit:cover;border-radius:16px;background:#0F2B46;box-shadow:0 14px 34px rgba(15,43,70,.18)}
 @media (max-width:760px){.cube-video{grid-template-columns:1fr}.cube-video video{max-width:340px;margin:0 auto}}
+.callout mark{background:none;color:var(--navy);font-weight:700}

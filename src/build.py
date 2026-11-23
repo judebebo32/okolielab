@@ -287,9 +287,14 @@ def build():
         elif ln.strip(): cur_t[1].append(ln.strip())
     def hl(s): return E(s).replace("Okolie, J.A.","<mark>Okolie, J.A.</mark>").replace("Onwudinjo, C.F.","Onwudinjo, C.F. (supervised by J.A. Okolie)").replace("Okolie, J.","<mark>Okolie, J.</mark>").replace("<mark><mark>","<mark>").replace("</mark>A.</mark>","A.</mark>")
     pubs="".join(f'<div style="margin-bottom:48px"><span class="tag">Theme {i+1}</span><h3 style="font-size:26px;margin-top:6px">{E(t.split(": ",1)[1])}</h3><ol class="pubs">{"".join("<li><span>"+re.sub(r"(https?://\S+)",lambda m:f'<a href="{m.group(1)}" target="_blank" rel="noopener" style="color:var(--orange-ink)">Link →</a>',hl(p))+"</span></li>" for p in ps)}</ol></div>' for i,(t,ps) in enumerate(blocks))
-    pubpage=hero("Publications","Publications","Peer-reviewed articles and book chapters, organized by research theme. For the most up-to-date list, see Google Scholar.")+f"""
-<section><div class="wrap"><div class="chips" style="margin-bottom:40px">{"".join(ext(t,u,"chip") for t,u in LINKS)}</div>{pubs}</div></section>
-<section><div class="wrap"><span class="tag">Books</span><h2>Books</h2><div class="books" style="margin-top:28px">{books}</div></div></section>"""
+    def cite(p): return re.sub(r"(https?://\S+)",lambda m:f'<a href="{m.group(1)}" target="_blank" rel="noopener" style="color:var(--orange-ink)">Link →</a>',hl(p))
+    chapters=[l.strip() for l in (CONTENT/"chapters.txt").read_text().split("\n") if l.strip() and not l.startswith("#")]
+    chap_html="".join(f"<li><span>{cite(c)}</span></li>" for c in chapters)
+    pubpage=hero("Publications","Publications","Peer-reviewed articles organized by research theme, followed by book chapters, books and a patent. For the most up-to-date list, see Google Scholar.")+f"""
+<section><div class="wrap"><div class="chips" style="margin-bottom:24px">{"".join(ext(t,u,"chip") for t,u in LINKS)}</div><div class="chips" style="margin-bottom:40px"><a class="chip" href="#chapters">Book chapters</a><a class="chip" href="#books">Books</a><a class="chip" href="#patent">Patent</a></div>{pubs}</div></section>
+<section id="chapters" class="tint"><div class="wrap"><span class="tag">Book chapters</span><h2>Book chapters</h2><ol class="pubs">{chap_html}</ol></div></section>
+<section id="books"><div class="wrap"><span class="tag">Books</span><h2>Books</h2><div class="books" style="margin-top:28px">{books}</div></div></section>
+<section id="patent" class="tint"><div class="wrap"><span class="tag">Intellectual property</span><h2>Patent</h2><div class="callout" style="background:#fff"><p style="margin:0">{PATENT}</p></div></div></section>"""
     page("publications.html","Publications · SETD Research Group","Publications and books by Dr. Jude A. Okolie and the SETD group.",pubpage)
 
     # TEACHING

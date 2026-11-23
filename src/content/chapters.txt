@@ -1,0 +1,5 @@
+# Book chapters (newest first). One citation per line, ending with its DOI URL. Rendered under Book chapters on the Publications page.
+Oyinloye, O.B., Adeleke, A.A., Okolie, J.A., Nzerem, P., Jesuloluwa, S. and Adewumi, C.N., 2026. Anaerobic digestion for biogas and bioelectricity generation. In Global Biorefinery Revolution. CRC Press. https://doi.org/10.1201/9781003650751-9
+Okoye, P.U., Duque-Brito, E., Lobata-Peralta, D.R., Okolie, J.A., Arias, D.M., & Sebastian, J.P. (2022). Catalytic Conversion of Glycerol to Bio-Based Aromatics. IntechOpen. https://doi.org/10.5772/intechopen.108148
+Patra, B.R., Okolie, J.A., Mukherjee, A., Pattnaik, F., Nanda, S., Dalai, A.K., ... & Sarangi, P.K. (2022). Recent Advancements in Thermochemical Biomethane Production. In Biomethane (pp. 93-110). Apple Academic Press. https://doi.org/10.1201/9781003277163-5
+Mukherjee, A., Patra, B.R., Pattnaik, F., Okolie, J.A., Sonil, N., & Dalai, A.K. (2022). Biomethane Production through Anaerobic Digestion of Lignocellulosic Biomass and Organic Wastes. Biomethane, 61-92. https://doi.org/10.1201/9781003277163-4
